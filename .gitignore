@@ -1,3 +1,10 @@
 *.exe
 *.in
 *.out
+*.rar
+*.zip
+*.ans
+input.txt
+std.txt
+brute.txt
+output.txt
