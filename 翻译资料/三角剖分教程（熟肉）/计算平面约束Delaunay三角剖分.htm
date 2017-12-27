@@ -1,0 +1,229 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>计算平面约束Delaunay三角剖分 </title>
+</head>
+<body bgcolor="#FFFFFF">
+<center><font color="#700000"><h1><strong><b>计算约束Delaunay三角剖分</b></strong></h1></font></center><font color="#700000"><strong><b><br>
+</b></strong><center><strong><b>（平面内）</b></strong></center></font>
+<dl>
+<center>By <a href="http://www.geom.uiuc.edu/~samuelp/welcome.html">Samuel Peterson</a>, University of Minnesota Undergraduate</center>
+<center>翻译：张浩宇</center><br>
+<hr>
+<ul>
+<li><a href="#goal">目标</a><br><p>
+</p></li><li><a href="#problem">问题</a><br><p>
+</p></li><li><a href="#algorithms">算法</a><br><p>
+</p></li><li><a href="#implementation">实现</a><br><p>
+</p></li><li><a href="#applications">应用</a><br><p>
+</p></li><li><a href="#acknowledgments">鸣谢</a><br><p>
+</p></li></ul>
+<hr>
+<b><h3><a name="goal">目标: </a></h3><br> </b><center><b>实现对给定二维点集，构建约束Delaunay三角剖分的算法。
+</b></center><br>
+<hr>
+<br><br>
+<b><h3><a name="problem">问题: </a></h3><br></b>
+<p>给定点集有多种三角剖分:  
+<br><br>
+</p><center><img src="%E8%AE%A1%E7%AE%97%E5%B9%B3%E9%9D%A2%E7%BA%A6%E6%9D%9FDelaunay%E4%B8%89%E8%A7%92%E5%89%96%E5%88%86_files/poss_tri.gif" width="600" height="200"></center>
+<center><font color="#800000">该点集有三种可能的三角剖分。</font></center>
+<br>有时，我们需要一种具有一些“漂亮”性质的三角剖分，Delaunay三角剖分是最寻常最有用的剖分之一，以俄罗斯数学家Бори́с Никола́евич Делоне́ 命名, 给定点集的Delaunay三角剖分由以下性质定义:  <br><br><center><b>AB是Delaunay三角剖分的一条边，但且仅当存在一个过A和B的圆，使得任何一个不等于A且不等于B的点不在圆内。</b></center><br><br>
+同样地，所有在该点集的Delaunay三角剖分中的三角形会有一个空外接圆，也就是说，没有点位于任何三角形外接圆的内部。
+<br><br><center><img src="%E8%AE%A1%E7%AE%97%E5%B9%B3%E9%9D%A2%E7%BA%A6%E6%9D%9FDelaunay%E4%B8%89%E8%A7%92%E5%89%96%E5%88%86_files/del_tri.gif" width="850" height="400"></center><br>
+<center><font color="#800000">我们可以立刻看出第一种三角剖分是Delaunay三角剖分，因为它所有的外接圆都是空的</font></center>
+<br> 
+任意一个二维点集存在Delaunay三角剖分.只要点集内不存在4点共圆，那么Delaunay三角剖分就是唯一的.因为它减少了小角，并缩小了外接圆，所以Delaunay三角剖分具有几何美，也就是说看起来很赏心悦目。   
+<br><br>
+请注意，我们最终想要生成约束Delaunay三角剖分。也就是说我们想要能够生成修改过的三角剖分，例如含有用户指定的边，或者有指定的“约束”。因为
+Delaunay三角剖分对任意点集是唯一的（假设没有四点共圆），约束Delaunay三角剖分多半会包含一些非Delaunay边。
+<br><br>
+<b>深入阅读:</b>
+<ul>
+<li><a href="http://www.ifor.math.ethz.ch/ifor/staff/fukuda/polyfaq/node13.html#SECTION00040000000000000000">http://www.ifor.math.ethz.ch/ifor/staff/fukuda/polyfaq/node13.html</a>
+</li><li><a href="http://tamfana.informatik.uni-dortmund.de/RVS/MA/Stud/misch/applets/Delaunay/Delaunay.html">http://tamfana.informatik.uni-dortmund.de/RVS/MA/Stud/misch/applets/Delaunay/Delaunay.html</a>
+</li><li><a href="http://www.gris.uni-tuebingen.de/gris/proj/dt/dteng.html">http://www.gris.uni-tuebingen.de/gris/proj/dt/dteng.html</a>
+</li></ul><br>
+<hr>
+<br><br>
+<b><h3><a name="algorithms">算法: </a></h3></b><br>
+<ul>
+<li>生成Delaunay三角剖分 <br><br>
+<p>为了生成Delaunay三角剖分，我们选择运行一种由 <a href="http://www.cl.cam.ac.uk/users/pjcb2/Publications/Delaunaysurvey/node9.html">Guibas and Stolfi </a> 提供的分治算法。 <br><br>
+Guibas, L. and Stolfi, J., "Primitives for the Manipulation of General 
+Subdivisions and the Computation of Voronoi Diagrams", ACM Transactions 
+on Graphics, Vol.4, No.2, April 1985, pages 74-123.
+<br><br>分治算法仅对点集的凸包计算Delaunay三角剖分，第一步是将所有点按照x为第一关键字，y为第二关键字升序排序。 <br><br>
+</p><center><img src="%E8%AE%A1%E7%AE%97%E5%B9%B3%E9%9D%A2%E7%BA%A6%E6%9D%9FDelaunay%E4%B8%89%E8%A7%92%E5%89%96%E5%88%86_files/numbered_pts.gif" width="300" height="250"></center> 
+<center><font color="#800000">排好序的10个点</font></center>
+<br><br>排好序之后，有序点集就被逐层二分，直到我们只剩下不多于3个点，如果剩2个，则会被构成线段，如果剩3个，则会被构成三角形。<br><br>
+<center><img src="%E8%AE%A1%E7%AE%97%E5%B9%B3%E9%9D%A2%E7%BA%A6%E6%9D%9FDelaunay%E4%B8%89%E8%A7%92%E5%89%96%E5%88%86_files/divided_pts.gif" width="300" height="250"></center>
+<center><font color="#800000">这个点集已经被“二分”成了2个点或3个点的子集，每个子集已经分别被三角剖分了</font></center>
+<br><br>
+在此之后，剖分过的子集被逐层合并，任何合并的最终结果会是一个包含LL-边（之前在左子剖分中，端点都在左点集中的边），RR-边（之前在右子剖分中，
+端点都在右点集中的边），LR-边（左右子剖分间新连的边，端点分别在左点集和右点集）的剖分。为了在合并时维护Delaunay剖分的性质，删掉一些
+LL-边和RR-边可能是必要的，但我们从不在合并时新建LL-边或RR-边。 <br><br>
+<center><img src="%E8%AE%A1%E7%AE%97%E5%B9%B3%E9%9D%A2%E7%BA%A6%E6%9D%9FDelaunay%E4%B8%89%E8%A7%92%E5%89%96%E5%88%86_files/merged_halves.gif" width="800" height="400"></center>
+<center><font color="#800000">最早的两次合并如图所示，它们有些简单，没有删除任何LL-边或RR-边。下一次合并会显得稍复杂一些，也更能展示这个算法。</font></center>
+<br><br>
+<center><img src="%E8%AE%A1%E7%AE%97%E5%B9%B3%E9%9D%A2%E7%BA%A6%E6%9D%9FDelaunay%E4%B8%89%E8%A7%92%E5%89%96%E5%88%86_files/first_merge.gif" width="300" height="250"></center>
+<center><font color="#800000">这就是我们目前的剖分，还差一步合并。全部左剖分的边都是LL-边，全部右剖分的边都是RR-边。</font></center>
+<br><br>合并两部分的第一步是插入基准LR-边，基准LR-边是不与任何LL-边或RR-边交叉的最底边。<br><br>
+<center><img src="%E8%AE%A1%E7%AE%97%E5%B9%B3%E9%9D%A2%E7%BA%A6%E6%9D%9FDelaunay%E4%B8%89%E8%A7%92%E5%89%96%E5%88%86_files/base_LR-edge.gif" width="300" height="250"></center>
+<center><font color="#800000">横跨左右剖分的基准LR-边</font></center>
+<br><br>做到这里，我们需要决定下一个加到基准LR-边上面的LR-边，显然，这样的一条边会有一个端点是基准LR-边的左端点或右端点，另一个端点属于左点集或右点集。自然地，我们通过选择两个候选点来限制我们的决策：一个来自左子集一个来自右子集。
+<br><br>我们先从右边开始。第一个可能的的候选点是，与基准LR-边右端点通过RR-边连接的顺时针方向最近的点，类似地，下一个可能的候选点是离基准LR-边顺时针方向次近的点。
+<center><img src="%E8%AE%A1%E7%AE%97%E5%B9%B3%E9%9D%A2%E7%BA%A6%E6%9D%9FDelaunay%E4%B8%89%E8%A7%92%E5%89%96%E5%88%86_files/init_pot_cand.gif" width="350" height="250"></center> 
+<center><font color="#800000">初始候选点和下一个候选点的选择</font></center>
+<br><br>可能的候选点会按照以下两项准则进行检查:<ol>
+<li> 候选点离基准LR-边的顺时针角度必须小于180度。
+</li><li> 过基准LR-边的两端点和该可能候选点的外接圆内部不能含有下一个可能候选点。
+</li></ol>
+<center><img src="%E8%AE%A1%E7%AE%97%E5%B9%B3%E9%9D%A2%E7%BA%A6%E6%9D%9FDelaunay%E4%B8%89%E8%A7%92%E5%89%96%E5%88%86_files/bad_pot_cand.gif" width="350" height="250"></center>
+<center><font color="#800000">如图，可能候选点满足第一条要求，但不满足第二条。</font></center>
+<br><br>如果两项要求都被满足，那么该可能的候选点会成为我们在右边最终的选择点，如果第一项不满足，那么右边就不会有选择点。如果满足第一项，
+不满足第二项，那么连接该可能点和基准LR-边右端点的边就会被删除。这个过程不断对下一个可能候选点重复，直到找到了最终选择点，或者确定没有选择点。<p>
+</p><center><img src="%E8%AE%A1%E7%AE%97%E5%B9%B3%E9%9D%A2%E7%BA%A6%E6%9D%9FDelaunay%E4%B8%89%E8%A7%92%E5%89%96%E5%88%86_files/good_pot_cand.gif" width="400" height="250"></center>
+<center><font color="#800000">在删掉一条“坏边”之后，找到了一个合适的右点。</font></center>
+<br><br>
+至于左边的候选点选择，过程就是右边的镜像。
+<center><img src="%E8%AE%A1%E7%AE%97%E5%B9%B3%E9%9D%A2%E7%BA%A6%E6%9D%9FDelaunay%E4%B8%89%E8%A7%92%E5%89%96%E5%88%86_files/l_cand.gif" width="350" height="350"></center>
+<center><font color="#800000">在左侧初始的可能候选点符合两项条件。</font></center>
+<br><br>当左右侧都不存在选择点的时候，合并就完成了。如果只有一个候选点，那么它自动地定义了一条需要加入的LR-边（译者注：该点到基准线另
+一端点连线）。如果两边都找到了候选点，合适的LR-边将通过一个简单的测试得到：如果右选择点不在左选择点与基准LR-边构成的圆内，那么由左点构成新
+的LR-边，反之亦然。因为Delaunay三角剖分的存在性（这里仅对4个点应用），有一个选择点符合条件；因为Delaunay三角剖分的唯一性，仅
+有一个选择点符合条件（假设不存在4点共圆）。 
+  <br><br>
+<center><img src="%E8%AE%A1%E7%AE%97%E5%B9%B3%E9%9D%A2%E7%BA%A6%E6%9D%9FDelaunay%E4%B8%89%E8%A7%92%E5%89%96%E5%88%86_files/cand_final.gif" width="800" height="300"></center>
+<center><font color="#800000">在样例中，只有左选择点符合条件，由此定义了新LR-边。</font></center>  
+<br><br>新LR-边加入之后，新LR-边作为基准LR-边重复以上过程。<br><br>
+<center><img src="%E8%AE%A1%E7%AE%97%E5%B9%B3%E9%9D%A2%E7%BA%A6%E6%9D%9FDelaunay%E4%B8%89%E8%A7%92%E5%89%96%E5%88%86_files/final_merge.gif" width="800" height="400"></center> 
+<center><font color="#800000">加入LR-边直到合并完成（也就是说既没有左选择点也没有右选择点时）</font></center>
+<br><br>最终，最后的两半（第一次“二分”形成的点集）合并之后，Delaunay三角剖分就完成了。
+<br><center><img src="%E8%AE%A1%E7%AE%97%E5%B9%B3%E9%9D%A2%E7%BA%A6%E6%9D%9FDelaunay%E4%B8%89%E8%A7%92%E5%89%96%E5%88%86_files/final_delaunay.gif" width="400" height="250"></center>
+<br><center><font color="#800000">Delaunay三角剖分</font></center>
+<br><br>德洛内三角剖分的示例:
+<ul>
+<li><a href="http://www.geom.uiuc.edu/locate/user/samuelp/rnd_10.ps">10 点</a><br>
+</li><li><a href="http://www.geom.uiuc.edu/locate/user/samuelp/rnd_100.ps">100 点</a><br>
+</li><li><a href="http://www.geom.uiuc.edu/locate/user/samuelp/rnd_1000.ps">1000 点</a><br>
+</li><li><a href="http://www.geom.uiuc.edu/locate/user/samuelp/rnd_10000.ps">10000 点</a><br>
+</li></ul>
+<br><br>接下来约束被加到Delaunay三角剖分中。约束是以要求某些点之间的边存在的形式给出。为了适应约束，我们需要删掉所有与约束边相交叉的边，某种程度上来说，我们是在为约束扫清障碍。这项工作完成后，我们将会得到一个没有被剖分，含有约束边的两个端点的多边形。
+<br><br>
+<center><img src="%E8%AE%A1%E7%AE%97%E5%B9%B3%E9%9D%A2%E7%BA%A6%E6%9D%9FDelaunay%E4%B8%89%E8%A7%92%E5%89%96%E5%88%86_files/path_clear.gif" width="360" height="300"></center>
+<center><font color="#800000">为约束边1-&gt;10扫清障碍, 得到了一个多边形</font></center>
+<br><br>加入约束边.  <br><br>
+<center><img src="%E8%AE%A1%E7%AE%97%E5%B9%B3%E9%9D%A2%E7%BA%A6%E6%9D%9FDelaunay%E4%B8%89%E8%A7%92%E5%89%96%E5%88%86_files/edge_added.gif" width="360" height="300"></center>
+<center><font color="#800000">加入约束边使得多边形被切成两半。</font></center><br>
+<br><br>随后这两半分别进行普通的三角剖分。<br><br>
+<center><img src="%E8%AE%A1%E7%AE%97%E5%B9%B3%E9%9D%A2%E7%BA%A6%E6%9D%9FDelaunay%E4%B8%89%E8%A7%92%E5%89%96%E5%88%86_files/final_cdt.gif" width="360" height="300"></center>
+<center><font color="#800000">新的剖分不全是Delaunay的。</font></center><br>
+<br><br>对于每条约束边重复以上操作。  
+<br><br>三角剖分中的洞(Holes)，被定义为包含约束边的闭合多边形，如果约束边出现在一些玄学位置，就会召唤出一种会把多边形内的三角形全删掉的“三角形吞噬病毒”。<br><br>  
+<br><br>约束Delaunay三角剖分的示例:
+<ul>
+<li><a href="http://www.geom.uiuc.edu/locate/user/samuelp/uofm_logo.ps">U of M Logo</a><br>
+</li><li><a href="http://www.geom.uiuc.edu/locate/user/samuelp/mcim.ps">MCIM</a><br>
+</li><li><a href="http://www.geom.uiuc.edu/locate/user/samuelp/minn.ps">Minnesota</a><br>
+</li></ul>
+<hr>
+<br><br>
+<b><h3><a name="implementation">实现: </a></h3><br></b>
+<p>我们选择用C++来面向对象地实现这个算法，因为实现分治法生成Delaunay三角剖分地数据结构和实现增加约束的不同，所以算法存在着轻微的二元性。
+<br><br>
+我们用一种三角数据结构的mod版来计算Delaunay三角剖分，它是由Jonathan Richard Shewchuk给出的： <br><br>
+Jonathan Richard Shewchuk, "Triangle: Engineering a 2D Quality Mesh 
+Generator and Delaunay Triangulator," First Workshop on Applied 
+Computational Geometry (Philadelphia, Pennsylvania), pages 124-133, 
+Association for Computing Machinery, May 1996.
+<br><br>三角形由六个数据成员定义：三个顶点和三个邻接三角形。如果三角形退化了，也就是说只有两个顶点，我们将第3个顶点赋为null,点按照顺时针顺序存储，i号邻接三角形与i号点相对.<br><br>
+</p><center><img src="%E8%AE%A1%E7%AE%97%E5%B9%B3%E9%9D%A2%E7%BA%A6%E6%9D%9FDelaunay%E4%B8%89%E8%A7%92%E5%89%96%E5%88%86_files/generic_tri.gif" width="400" height="375"></center>
+<br><br>如果某一个顶点没有邻接三角形与之相对，那么其邻接三角形这样定义，以该点顺时针方向的下一个点为中心，初始方向为中心点与第三点连线当前三角形，在当前三角形外逆时针旋转遇到的第一个三角形。<br><br>
+<center><img src="%E8%AE%A1%E7%AE%97%E5%B9%B3%E9%9D%A2%E7%BA%A6%E6%9D%9FDelaunay%E4%B8%89%E8%A7%92%E5%89%96%E5%88%86_files/no_adj.gif" width="400" height="300"></center>
+<br><br>这种数据结构考虑到了三角剖分的连通（就是说所有的三角形都能从任何一个点开始被访问到），即使剖分还没有完成。 <br><br>
+<center><img src="%E8%AE%A1%E7%AE%97%E5%B9%B3%E9%9D%A2%E7%BA%A6%E6%9D%9FDelaunay%E4%B8%89%E8%A7%92%E5%89%96%E5%88%86_files/disconnected.gif" width="350" height="400"></center> 
+<br><br>刚刚介绍的数据结构对于Guibas and Stolfi的Delaunay三角剖分算法来说非常好用，但加入约束之后复杂度爆炸，我们将会用实例来说明这种数据结构在加入约束之后是如何崩坏的，以及另一种待选方案的优势。
+<br><br>假设我们已经使用上述数据结构实现了Guibas and Stolfi的算法，并得到了下图的Delaunay三角剖分:<p>
+</p><center><img src="%E8%AE%A1%E7%AE%97%E5%B9%B3%E9%9D%A2%E7%BA%A6%E6%9D%9FDelaunay%E4%B8%89%E8%A7%92%E5%89%96%E5%88%86_files/init_del.gif" width="360" height="300"></center><br>
+假如我们现在要加入一条约束边BL.
+<center><img src="%E8%AE%A1%E7%AE%97%E5%B9%B3%E9%9D%A2%E7%BA%A6%E6%9D%9FDelaunay%E4%B8%89%E8%A7%92%E5%89%96%E5%88%86_files/constraint.gif" width="360" height="300"></center><br>
+遵循之前介绍的算法，第一步是删掉所有与约束边交叉的边。
+<center><img src="%E8%AE%A1%E7%AE%97%E5%B9%B3%E9%9D%A2%E7%BA%A6%E6%9D%9FDelaunay%E4%B8%89%E8%A7%92%E5%89%96%E5%88%86_files/path_clear_2.gif" width="360" height="300"></center><br>
+根据三角形数据结构，我们的三角剖分通过“幽灵”三角形（含有null端点的三角形）和圆箭头维护连通。
+<center><img src="%E8%AE%A1%E7%AE%97%E5%B9%B3%E9%9D%A2%E7%BA%A6%E6%9D%9FDelaunay%E4%B8%89%E8%A7%92%E5%89%96%E5%88%86_files/old_hole.gif" width="500" height="400"></center><br>
+另外，因为我们需要定位并替换掉被删除的区域，所以这些也需要被存储，被三角化以包含约束边，以及被表示。
+<center><img src="%E8%AE%A1%E7%AE%97%E5%B9%B3%E9%9D%A2%E7%BA%A6%E6%9D%9FDelaunay%E4%B8%89%E8%A7%92%E5%89%96%E5%88%86_files/old_triang_hole.gif" width="400" height="200"></center><br>
+既然这个区域已经被定位了，它就必须被像拼图的一块一样加回去，这就是难度爆炸的地方。图像上来看，很容易发现是如何拼成的，然而在内部表示的时候，匹配
+邻接三角形和重置指针复杂度爆炸，尤其是出现“幽灵”三角形时，以及包含非邻接三角形时。麻烦随着点的数量和约束的数量激增，显然，我们需要修改数据结构
+来适应约束添加。
+<br><br>解决方法是一种更普适更灵活的数据结构：多边形。多边形和三角数据结构很相似，数据成员包括顶点（顺时针顺序）和邻接四边形，除以多边形
+的可变大小之外，就是多边形仅包含真正邻接的多边形的引用，如果有一边没有邻接多边形，那么指针就被赋为null。此外，因为我们的多边形不要求是凸多边
+形，所以我们不能通过对点来命名，边1被定义为连接点1和点2的边，以此类推，特别地，边n（多边形大小为n）被定义为连接点n和点1和边。
+<br><br>
+<center><img src="%E8%AE%A1%E7%AE%97%E5%B9%B3%E9%9D%A2%E7%BA%A6%E6%9D%9FDelaunay%E4%B8%89%E8%A7%92%E5%89%96%E5%88%86_files/generic_poly.gif" width="400" height="350"></center>
+<br><br>
+这种数据结构很棒因为它是双向的，也就是说，复如果多边形A有对多边形B的引用，那么B一定有对多边形A的引用。<br><br>
+<center><img src="%E8%AE%A1%E7%AE%97%E5%B9%B3%E9%9D%A2%E7%BA%A6%E6%9D%9FDelaunay%E4%B8%89%E8%A7%92%E5%89%96%E5%88%86_files/commutative.gif" width="200" height="175"></center><br>
+这种结构成功解决我们问题的关键在于多边形的两个方法函数：split和join。<br>
+split函数将一个多边形沿一条指定的边分裂成两个邻接多边形。<br>
+<center><img src="%E8%AE%A1%E7%AE%97%E5%B9%B3%E9%9D%A2%E7%BA%A6%E6%9D%9FDelaunay%E4%B8%89%E8%A7%92%E5%89%96%E5%88%86_files/split.gif" width="800" height="350"></center><br>
+join函数将两个邻接多边形融合为一个多边形。<br>
+<center><img src="%E8%AE%A1%E7%AE%97%E5%B9%B3%E9%9D%A2%E7%BA%A6%E6%9D%9FDelaunay%E4%B8%89%E8%A7%92%E5%89%96%E5%88%86_files/join.gif" width="800" height="350"></center><br>
+显然，这两个函数是互反的，这些简单的方法能被顺利地引用在我们的边约束问题（当然，在所有的三角剖分中的三角形都被抓换为多边形之后）。
+<center><img src="%E8%AE%A1%E7%AE%97%E5%B9%B3%E9%9D%A2%E7%BA%A6%E6%9D%9FDelaunay%E4%B8%89%E8%A7%92%E5%89%96%E5%88%86_files/new_hole.gif" width="500" height="400"></center><br>
+<center><img src="%E8%AE%A1%E7%AE%97%E5%B9%B3%E9%9D%A2%E7%BA%A6%E6%9D%9FDelaunay%E4%B8%89%E8%A7%92%E5%89%96%E5%88%86_files/new_halved_hole.gif" width="500" height="400"></center><br>
+<center><img src="%E8%AE%A1%E7%AE%97%E5%B9%B3%E9%9D%A2%E7%BA%A6%E6%9D%9FDelaunay%E4%B8%89%E8%A7%92%E5%89%96%E5%88%86_files/new_const.gif" width="500" height="400"></center><br>
+
+<hr>
+<br><br>
+<b><h3><a name="applications">应用: </a></h3><br></b>
+<ul>
+<li><u>高质量三角网:</u>
+<br><br>
+常用于计算机图形设计，微分方程问题，和数值分析，将给定问题区域的点三角化为一个高质量的网络是很有必要的——高质量是指拥有相对均匀的三角形的三角剖分。也就是我们想要排除极小（以及极大的）角。在二维和三维解决这个问题的一个算法由
+<a href="http://simon.cs.cornell.edu/Info/Department/Annual95/Researchers/Chew.html">L. Paul Chew</a>在
+他的论文 "Guaranteed High-quality Mesh Generation for Curved 
+Surfaces."中提出。算法的第一步是对给定点集生成约束Delaunay三角剖分，算法剩下的工作包含一个简单但优美的三角“分级”
+(grading)，以及逐次加点到三角剖分中。 <br>  
+</li><li><u> 最小生成树: </u>
+<br><br>
+在很多综合性问题中，知道给定平面点集的最小生成树很有帮助。可以证明，点集S的每一种最小生成树都是S的Delaunay三角剖分的一个子图。 <br>
+</li><li><u> Voronoi 图: </u>
+<br><br>以俄罗斯数学家 Гео́ргий Феодо́сьевич Вороно́й 命名，Voronoi图（Voronoi 
+diagrams）也被叫做Thiessen多边形（Thiessen Polygons）和Blum中轴变换（Blum's Medial Axis 
+Transform）。对于二维平面点集S的Voronoi图（假设没有三点共线或四点共圆）是一种将平面划分为多边形的划分。每个S中的点都在某个多边
+形内部且每个多边形恰好含有一个点位于其内部。每个多边形占据的区域离其包含的点比其他S中的点都近。 <br>
+<center><img src="%E8%AE%A1%E7%AE%97%E5%B9%B3%E9%9D%A2%E7%BA%A6%E6%9D%9FDelaunay%E4%B8%89%E8%A7%92%E5%89%96%E5%88%86_files/voronoi_diag.gif" width="400" height="400"></center>
+<br><br>
+Voronoi图其实就是Delaunay三角剖分的直线偶图，也就是说，我们可以通过作区域边界的垂线来将Delaunay三角剖分转换为Voronoi图，反之亦然。<br>
+<center><img src="%E8%AE%A1%E7%AE%97%E5%B9%B3%E9%9D%A2%E7%BA%A6%E6%9D%9FDelaunay%E4%B8%89%E8%A7%92%E5%89%96%E5%88%86_files/voronoi_del.gif" width="400" height="400"></center>
+<br><br><br>
+</li></ul>
+<hr>
+<br><br>
+<b><h3><a name="acknowledgments">鸣谢: </a></h3></b>
+<ul>
+<li>该项目是 <a href="http://www.math.umn.edu/mcim/">Minnesota Center for Industrial Mathematics</a> <a href="http://www.math.umn.edu/mcim/uimp.html">Undergraduate Industrial Mathematics Project.</a> 的一部分<br><br>
+</li><li>问题由Minnesota的XOX公司提出.  <br><br>
+</li><li>项目指导教授:<br>
+<ul>
+<li><a href="http://www.geom.umn.edu/about/people/home/deloera.html">Jesus De Loera</a>, Postdoctoral Fellow at the University of Minnesota <br>
+</li><li><a href="http://www.hamline.edu/~wnk/">Wojciech Komornicki </a>, Professor of Mathematics at Hamline University <br><br>
+</li></ul>
+</li><li>特别感谢Minnesota大学的 <a href="http://www.geom.umn.edu/">The Geometry Center</a> 提供的计算设备<br><br>
+</li></ul>
+<hr>
+
+<a href="http://www.geom.uiuc.edu/~samuelp/welcome.html">回到我的主页</a><br>
+<br>
+想要或代码或者有其他请求，点这里:  <a href="http://www.geom.uiuc.edu/admin/bin/make-mailform.cgi?to=samuelp@geom.umn.edu">
+<code>samuelp@geom.umn.edu</code></a><br>
+<hr>
+
+
+
+
+
+
+
+</li></ul></dl></body></html>
