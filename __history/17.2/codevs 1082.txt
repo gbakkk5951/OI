@@ -1,0 +1,97 @@
+#include<cstdio>
+#include<algorithm>
+#include<memory.h>
+#include<iostream>
+using namespace std;
+int st,ed;
+long long val;
+struct segtree
+{
+	long long val,add;
+}tree[4200000];
+void build(int l,int r,int pos)
+{
+	if(l==r)
+	{
+		scanf("%lld",&tree[pos].val);
+		return;
+	}
+	int mid=(l+r)/2,lson=pos*2,rson=pos*2+1;
+	build(l,mid,lson);
+	build(mid+1,r,rson);
+	tree[pos].val=tree[lson].val+tree[rson].val;
+	return;
+}
+void pushdown(int l,int r,int pos)
+{
+	if(tree[pos].add!=0)
+	{
+		int mid=(l+r)/2,lson=pos*2,rson=pos*2+1;
+		tree[lson].add+=tree[pos].add;
+		tree[rson].add+=tree[pos].add;
+		tree[lson].val+=tree[pos].add*(mid-l+1);
+		tree[rson].val+=tree[pos].add*(r-mid);
+		tree[pos].add=0;
+	}
+}
+void update(int l,int r,int pos)
+{
+	if(st<=l&&r<=ed)
+	{
+		tree[pos].val+=(r-l+1)*val;
+		tree[pos].add+=val;
+		return;
+	}
+	int mid=(l+r)/2,lson=pos*2,rson=pos*2+1;
+	pushdown(l,r,pos);
+	if(st<=mid)
+	{
+		update(l,mid,lson);
+	} 
+	if(ed>mid)
+	{
+		update(mid+1,r,rson);
+	}
+	tree[pos].val=tree[lson].val+tree[rson].val;
+}
+long long find(int l,int r,int pos)
+{
+	if(st<=l&&r<=ed)
+	{
+		return tree[pos].val;
+	}
+	pushdown(l,r,pos);
+	int mid=(l+r)/2,lson=pos*2,rson=pos*2+1;
+	if(ed<=mid)
+	{
+		return find(l,mid,lson);
+	}
+	if(st>mid)
+	{
+		return find(mid+1,r,rson);
+	}
+	return find(l,mid,lson)+find(mid+1,r,rson);
+}
+int main()
+{
+	int m,n,i;
+	long long s;
+	scanf("%d",&n);
+	build(1,n,1);
+	scanf("%d",&m);
+	for(i=1;i<=m;i++)
+	{
+		scanf("%lld",&s);
+		if(s==1)//add
+		{
+			scanf("%d%d%lld",&st,&ed,&val);
+			update(1,n,1);
+		}
+		else //find
+		{
+			scanf("%d%d",&st,&ed);
+			s=find(1,n,1);
+			printf("%lld\n",s);
+		}
+	}
+}

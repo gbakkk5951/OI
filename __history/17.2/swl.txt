@@ -1,0 +1,76 @@
+#include<stdio.h>
+int s,sx,sy;
+struct p
+{
+	int fa;
+	int rel;
+}ani[50010];
+int father(int on)
+{
+	if(ani[on].fa==on)
+		return on;
+	father(ani[on].fa);
+	ani[on].rel+=ani[ani[on].fa].rel;
+	ani[on].fa=father(ani[on].fa);
+	ani[on].rel%=3;
+	return ani[on].fa;
+}
+int find(int on)
+{
+	return ani[on].fa==on?on:find(ani[on].fa);
+}
+void add(int x,int y,int r)
+{
+	ani[father(x)].rel=r;
+	ani[find(x)].fa=ani[father(y)].fa;
+}
+int main()
+{
+	int i,j,n,k,r,x,y,ans=0;
+	scanf("%d%d",&n,&k);
+	for(i=1;i<=n;i++)
+	{
+		ani[i].fa=i;
+		ani[i].rel=0;
+	}
+	for(i=0;i<k;i++)
+	{
+		scanf("%d%d%d",&r,&x,&y);
+		if((x>n||y>n)||(x==y&&r==2))
+		{
+			ans++;
+		//printf("%d\n",ans);
+			continue;
+		}
+		if(r==1) r--;
+		if(father(x)==father(y))
+		{
+			sx=ani[x].rel;
+			sy=ani[y].rel;
+			s=sx-sy;
+			while(s<0)
+				s+=3;
+			if(r==s)
+				continue;
+			else
+			{
+				ans++;
+				//printf("%d\n",ans);
+				continue;
+			}
+		}
+		else
+		{
+			sx=ani[x].rel;
+			sy=ani[y].rel;
+			s=(r-sx+sy+3)%3;
+		//printf("sx=%d   ",sx);
+		//printf("sy=%d   \n",sy);
+			add(x,y,s);
+		}
+		//printf("%d\n",ans);
+	}
+	printf("%d",ans);
+	//while(1);
+	return 0;
+}
