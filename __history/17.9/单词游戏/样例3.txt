@@ -1,0 +1,6 @@
+5
+abc
+acb
+cf
+bh
+ha
