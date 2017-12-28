@@ -10,7 +10,7 @@ const int MAXN = 200010;
 
 template<typename Type>
     void read(Type &a) {
-        char t, f=1;
+        char t, f = 1;
         while (!isdigit(t = getchar())) {
             if (t == '-') {
                 f = -1;
@@ -29,8 +29,8 @@ struct Node {
     int size;
     Node *son[2], *fa;
     void inline update() {
-        size = son[0] ? son[0]->size : 0 
-             + son[1] ? son[1]->size : 0
+        size = (son[0] ? son[0]->size : 0)
+             + (son[1] ? son[1]->size : 0)
              + 1;
     }
 }pool[MAXN];
