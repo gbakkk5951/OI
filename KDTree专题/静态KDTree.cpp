@@ -109,14 +109,7 @@ private:
                 nd->max[j] = max(nd->max[j], val[i][j]);
                 nd->min[j] = min(nd->min[j], val[i][j]);
             }
-        }
-        
-//        char tmp[250];
-//        for (i = 0; i < Dim; i++) {
-//            sprintf(tmp, "[%d, %d] max[%d] = %lld; min[%d] = %lld;\n", l, r, i, nd->max[i], i, nd->min[i]);
-//            cerr<<tmp;
-//        }
-        
+        }  
     }
     void setFaDimRange(KDNode<Dim> *nd) {
         int i, j;
@@ -148,9 +141,7 @@ private:
     int size;
     KDNode<2> *root;
     KDNode<2> * build(int l, int r) {
-//        printf("build(%d, %d)", l, r);
         KDNode<Dim> * nd = new_kdnode();
-        //setDimRange(nd, l, r); 
         if (l == r) {
             nd->val.pos = l;
             setDimRange(nd, l, r); 
@@ -165,9 +156,6 @@ private:
         }
         cmp.setDim(maxDim);
         nth_element(&val[l], &val[mid], &val[r+1], cmp);
-        /*while (mid - 1 >= l && val[mid - 1](maxDim) == val[mid](maxDim)) {
-            mid--;
-        }*/
         nd->dim = maxDim;
         nd->val.mid = val[mid](maxDim);
         nd->son[0] = build(l, mid);
@@ -189,7 +177,6 @@ private:
     void findMinDis(const Vec<Dim> &point, KDNode<Dim> *nd) {
        
         if (!(nd->son[0] || nd->son[1])) {
-//            printf("min = %lld\n", nd->val.pos );
             now_ans = min(now_ans, getDis(point, nd));
             return;
         }
@@ -236,7 +223,6 @@ KDTree<2> tree;
 struct _Main {
     
 _Main() {
-//    freopen("data0.in","r",stdin);
     int n, m;
     int i, j, k;
     int Q, Qn;
@@ -250,9 +236,6 @@ _Main() {
         tree.setVal(i, 1, b);
     }
     tree.build();
-//    for (i = 1; i <= n; i++) {
-//        printf("%d %d\n", tree.getVal(i, 0), tree.getVal(i, 1));
-//    }
     for (Q = 1; Q <= Qn; Q++) {
         read(point[0]); read(point[1]);
         printf("%lld\n", tree.findMinDis(point));
