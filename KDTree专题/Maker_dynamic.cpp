@@ -157,7 +157,8 @@ void run(){
 		
 		if (check_brute) {
     		cmd= bruteName + ".exe > brute"+to_string(I)+".out < "+dataName+to_string(I)+".in";
-    		a = clock();
+    		cerr<<"Run: "<<cmd<<endl;
+            a = clock();
             system(cmd.c_str());
     		b = clock();
     		if (brute_time_count) {
@@ -177,12 +178,13 @@ void run(){
 		system(cmd.c_str());
 		b = clock();
 		if (time_count) {
-		    cerr<<stdName + " uses "<<b - a<<"ms"<<endl;
+		    cerr<<stdName + " uses "<<b - a<<"ms"<<endl<<endl;
 		}
 		
 		if (check_brute) {	
     		cmd= bruteName + ".exe > brute_ex"+to_string(I)+".out < "+dataName+"_ex"+to_string(I)+".in";
-    		a = clock();
+    		cerr<<"Run: "<<cmd<<endl;
+            a = clock();
             system(cmd.c_str());
     		b = clock();
     		if (brute_time_count) {
@@ -219,7 +221,8 @@ _Main(){
 	        }
 	        if (run_ans) {
 	            run();
-	        }        
+	            cerr<<endl;
+	        }
 	    }
 	}
 	

@@ -47,7 +47,7 @@ union Val{
 };
 public:
     KDNode *son[2];
-    Vec<Dim, long long>max,min;
+    Vec<Dim>max,min;
     int dim;
     Val val;
 };
@@ -106,8 +106,8 @@ private:
         }
         for (i = l; i <= r; i++) {
             for (j = 0; j < Dim; j++) {
-                nd->max[j] = max(nd->max[j], (long long) val[i][j]);
-                nd->min[j] = min(nd->min[j], (long long) val[i][j]);
+                nd->max[j] = max(nd->max[j], val[i][j]);
+                nd->min[j] = min(nd->min[j], val[i][j]);
             }
         }
         
@@ -118,6 +118,20 @@ private:
 //        }
         
     }
+    void setFaDimRange(KDNode<Dim> *nd) {
+        int i, j;
+        for (j = 0; j < Dim; j++) {
+            nd->max[j] = -LINF;
+            nd->min[j] = LINF;
+        }
+        for (i = 0; i < 2; i++) {
+            for (j = 0; j < Dim; j++) {
+                nd->max[j] = max(nd->max[j], nd->son[i]->max[j]);
+                nd->min[j] = min(nd->min[j], nd->son[i]->min[j]);
+            }
+        }        
+    }
+    
     long long getDis(const Vec<Dim>&point, KDNode<Dim> *nd) {
         long long ret = 0;
         int i;
@@ -136,15 +150,17 @@ private:
     KDNode<2> * build(int l, int r) {
 //        printf("build(%d, %d)", l, r);
         KDNode<Dim> * nd = new_kdnode();
-        setDimRange(nd, l, r); 
+        //setDimRange(nd, l, r); 
         if (l == r) {
             nd->val.pos = l;
+            setDimRange(nd, l, r); 
             return nd;
         }
         int mid =r + l >> 1;
         int maxDim = getMaxDim(l, r);
         if (maxDim == -1) {
             nd->val.pos = l;
+            setDimRange(nd, l, l); 
             return nd;
         }
         cmp.setDim(maxDim);
@@ -156,6 +172,7 @@ private:
         nd->val.mid = val[mid](maxDim);
         nd->son[0] = build(l, mid);
         nd->son[1] = build(mid + 1, r);
+        setFaDimRange(nd);
         return nd;
     }
     long long getDis(const Vec<Dim> &a, const Vec<Dim> &b) {
@@ -166,22 +183,26 @@ private:
         }
         return ret;
     }
-    long long findMinDis(const Vec<Dim> &point, KDNode<Dim> *nd) {
+    
+    long long now_ans;
+    
+    void findMinDis(const Vec<Dim> &point, KDNode<Dim> *nd) {
        
         if (!(nd->son[0] || nd->son[1])) {
 //            printf("min = %lld\n", nd->val.pos );
-            return getDis(val[nd->val.pos], point);
+            now_ans = min(now_ans, getDis(point, nd));
+            return;
         }
         long long dis[2];
         dis[0] = getDis(point, nd->son[0]);
         dis[1] = getDis(point, nd->son[1]);
         int pos = dis[1] < dis[0];
-        long long ans;
-        ans = findMinDis(point, nd->son[pos]);
-        if (dis[pos^1] < ans) {
-            ans = min(ans, findMinDis(point, nd->son[pos^1]));
+        if(dis[pos] < now_ans){
+            findMinDis(point, nd->son[pos]);
         }
-        return ans;
+        if (dis[pos^1] < now_ans) {
+            findMinDis(point, nd->son[pos^1]);
+        }
     }
 public:
     void setSize(int new_size) {
@@ -200,7 +221,9 @@ public:
         root = build(1, size );
     }
     long long inline findMinDis(const Vec<Dim> &point) {
-        return findMinDis(point, root);
+        now_ans = LINF;
+        findMinDis(point, root);
+        return now_ans;
     }
 };
     
