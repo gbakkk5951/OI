@@ -140,4 +140,5 @@ _Main() {
 //类型改变要改完 例如 node 改为long long ，但在插入时没改 
 //long long 要用LINF 
 //要查0号点的，应该是WA的，但数据水 
+//ST表需要大量预处理，反而比ZKW慢 
 
