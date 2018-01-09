@@ -29,13 +29,17 @@ struct Edge{
 	int nxt, dst;
 	double dis;
 	int getDst() {
-		return dst = getFa(dst);
+		return getFa(dst);
+	}
+	void newDst() {
+	    dst = getFa(dst);
 	}
 }edge[MAX_M];
 
 int head[MAX_N];
 double x[MAX_N], y[MAX_N];
 double pre_val[MAX_N << 1];
+double lst_val[MAX_N << 1];
 int reveidx, eidx;
 int pre[MAX_N << 1];
 char vis[MAX_N << 1];
@@ -59,11 +63,13 @@ double sum;
 
 void merge_loop(int nd) {
 	int i;
-	fa[getFa(nd)] = loop_idx;
-	for (i = pre[nd]; i != nd; i = pre[nd]) {
-		fa[getFa(i)] = loop_idx;
+	printf("%d include %d\n",loop_idx, getFa(nd));
+    fa[getFa(nd)] = loop_idx;
+	
+	for (i = pre[nd]; i != nd; i = pre[i]) {
+		printf("%d include %d\n",loop_idx, getFa(i));
+        fa[getFa(i)] = loop_idx;
 	}
-	pre_val[loop_idx] = sum * 2;
 	loop_idx++;
 }
 
@@ -71,28 +77,38 @@ void merge_loop(int nd) {
 double getMinTreeGraph() {
 	double ans = 0;
 	char finish = 0;
-	int i, nd;
-	for (i = 1; i <= n; i++) {
-		pre_val[i] = sum * 2;
-	}
+	int i, nd, now_n;
+
 	while (finish == 0) {
 		finish = 1;
+    	now_n = loop_idx;
+        for (i = 1; i < now_n; i++) {
+    		if (!vis[i]) {
+    		    pre_val[i] = sum * 2;
+    		}
+    	}
+    	
 		for (nd = 0; nd <= n; nd++) {
-			for (i = head[nd]; i; i = edge[i].nxt) {
-				if (getFa(nd) == edge[i].getDst() ) {
-					continue;
+            for (i = head[nd]; i; i = edge[i].nxt) {
+				if (getFa(nd) == edge[i].getDst() || vis[edge[i].getDst()]) {
+					edge[i].newDst();
+                    continue;
 				}
-				if (edge[i].dis + EPS < pre_val[edge[i].getDst()] - EPS) {
-					pre_val[edge[i].getDst()] = edge[i].dis;
+				if (edge[i].dis - lst_val[edge[i].dst] + EPS < pre_val[edge[i].getDst()] - EPS) {
+                    pre_val[edge[i].getDst()] = edge[i].dis - lst_val[edge[i].dst];
 					pre[edge[i].getDst()] = getFa(nd);
 				}
+				edge[i].newDst();
 			}
 		}
-		for (i = 1; i <= loop_idx; i++) {
+		memset(vis, 0, (now_n) * sizeof(char));
+		memset(out_stk, 0, (now_n) * sizeof(char));
+		for (i = 1; i < now_n; i++) {
 			if (!vis[i]) {
-				printf("beg from %d\n", i);
+//				printf("beg from %d\n", i);
 				for (nd = i; nd; nd = pre[nd]) {
-					if (vis[nd]) {
+                    printf("check loop of %d\n", getFa(nd));
+                    if (vis[getFa(nd)]) {
 						if (out_stk[nd]) {
 							break;
 						} else {
@@ -101,11 +117,13 @@ double getMinTreeGraph() {
 							break;									
 						}
 					}
-					vis[nd] = 1;
-					ans += pre_val[nd];
-					printf("pre_val[%d] = %lf\n", nd, pre_val[nd]);
+					vis[getFa(nd)] = 1;
+					ans += pre_val[getFa(nd)];
+					printf("pre_val[%d] = %lf from %d\n", nd, pre_val[nd], pre[nd]);
 				}
+//				printf("out");
 				for (nd = i; nd; nd = pre[nd]) {
+//				    printf("nd = %d\n", nd);
 					if (out_stk[nd]) {
 						break;
 					} else {
@@ -118,6 +136,8 @@ double getMinTreeGraph() {
 		if (!(ans + EPS < sum * 2 - EPS)) {
 			return -1;
 		}
+		printf("now_n = %d\n", now_n);
+		memcpy(lst_val, pre_val, (now_n) * sizeof(int));
 	}
 	return ans;
 }
@@ -160,6 +180,7 @@ _Main() {
 		for (i = 1; i <= n; i++) {
 			add(0, i, sum);
 		}		
+		printf("sum = %lf\n", sum);
 		ans = getMinTreeGraph();
 		if (ans < -EPS) {
 			printf("poor snoopy\n");
@@ -178,3 +199,5 @@ _Main() {
 
 
 }
+
+//注意有没有自己拓宽循环次数的 
