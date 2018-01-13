@@ -5,6 +5,7 @@ int main() {}
 #include <cctype>
 #include <cstring>
 #include <iostream>
+#include <cmath>
 
 namespace Protector {
 const long long LINF = 0x3f3f3f3f3f3f3f3fLL;
@@ -24,9 +25,10 @@ template <typename Type>
         }
         a *= f;
     }
-template<typename Type>    
-Type inline pf(Type a) {
-    return a * a;
+//template<typename Type>    
+double inline pf(double a) {
+    return fabs(a);
+//    return a * a;
 }    
 template <int dimension, typename Type = int>
 struct Vec {
@@ -237,6 +239,7 @@ _Main() {
     }
     tree.build();
     for (Q = 1; Q <= Qn; Q++) {
+        read(a);
         read(point[0]); read(point[1]);
         printf("%lld\n", tree.findMinDis(point));
     }

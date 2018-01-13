@@ -86,8 +86,8 @@ int lrand(int min, int max) {
 }
 //////////////
 string dataName = "data";
-string stdName = "¾²Ì¬KDTree";
-string bruteName = "brute1";
+string stdName = "cmd";
+string bruteName = "¾²Ì¬KDTree";
 
 bool make_data = true;
 bool run_ans = true;
@@ -98,7 +98,7 @@ int beg = 0
 ,   exend = 0
 ;
 
-bool check_brute = false;
+bool check_brute = true;
 bool check_out_pause = true;
 bool loop_check = true;
 bool loop_count = true;
@@ -120,10 +120,10 @@ void make(){
         N = 100000; M = 100000;
         output << N << " " << M <<endl;
         for (i = 1; i <= N; i++) {
-            output<< lrand(-mod, mod) <<" "<<lrand(-mod, mod)<<endl;
+            output<< lrand(-10, 10) <<" "<<lrand(-mod, mod)<<endl;
         }
         for (i = 1; i <= M; i++) {
-            output<< lrand(-mod, mod) <<" "<<lrand(-mod, mod)<<endl;
+            output<<2<<" "<< lrand(-10, 10) <<" "<<lrand(-mod, mod)<<endl;
         }
 		EndFor1:
 		output.close();
