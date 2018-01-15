@@ -186,3 +186,4 @@ template<typename Type>
 
 }
 //神TM 0表示在， 1表示不在 
+//通过memset清空的话， 不能把STL包括在内 
