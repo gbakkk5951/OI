@@ -9,34 +9,29 @@ namespace Protector {
 const int MAXN = 810;
 class SegmentTree {
 private:   
-    int node[2051];
+    int node[MAXN];
     int n;
     int base;
+    int inline lb(int a) {
+        return a & -a;
+    }
 public:
     int getMax(int s, int t) {
-        int ret = 0;
-        for (s += base - 1, t += base + 1; s ^ t ^ 1; s >>= 1, t >>= 1) {
-            if (~s & 1) {
-                ret = max(ret, node[s ^ 1]); 
-            }
-            if ( t & 1) {
-                ret = max(ret, node[t ^ 1]);
-            }
+        for (t = 0, s = n - s + 1; s; s -= lb(s)) {
+            t = max(t, node[s]);
         }
-        return ret;
+        return t;
     }
-
     void setSize(int new_size) {
         n = new_size;
-        for (base = 1; base < n + 2; base <<= 1);
     }
     void setVal(int nd, int val) {
-        for (nd += base; nd; nd >>= 1) {
+        for (nd = n - nd + 1; nd <= n; nd += lb(nd)) {
             node[nd] = max(node[nd], val);
         }
     }
     void clear() {
-        memset(node, 0, (base << 1) * sizeof(int));
+        memset(node + 1, 0, n * sizeof(int));
     }
 };
 char a[MAXN], b[MAXN];
@@ -47,7 +42,7 @@ class Solver {
 private:
     int q[MAXN], head, tail;
     int val[MAXN];
-    SegmentTree tree[810];
+    SegmentTree tree[MAXN];
     int ans;
 public:
 void init() {
@@ -57,12 +52,6 @@ void init() {
     }
 }
 
-void push(int pos) {
-    while (head < tail && val[q[tail - 1]] <= val[pos]) {
-        tail--;
-    }
-    q[tail++] = pos;
-}
 void solve() {
     int i, j, k;
     for (i = 1; i <= lb; i++) {
@@ -71,19 +60,30 @@ void solve() {
             ans = 1;
         }
     }
+    
     for (i = 2; i <= la; i++) {
         head = tail = 0;
         q[0] = 0; val[0] = 0;
         for (j = 1; j <= lb; j++) {
+            //由于树状数组只能查前缀，所以必须先取出 
             val[j] = tree[j].getMax(max(1, i - dis[a[i]]), i - 1);
+            
+            //单调队列维护队头合法 
             if (q[head] < j - dis[a[i]]) {
                 head++;
             }
+            //更新答案 
             if (a[i] == b[j]) {
                 ans = max(ans, val[q[head]] + 1);
                 tree[j].setVal(i, val[q[head]] + 1);
             }
-            push(j);
+            
+            //插入第j列[i - dis[a[i]], i - 1]的dp状态 
+            
+            while (head < tail && val[q[tail - 1]] <= val[j]) {
+                tail--;
+            }
+            q[tail++] = j;
         }
     }
     
