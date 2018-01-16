@@ -4,14 +4,15 @@ int main() {}
 #include <cctype>
 #include <cstring>
 #include <queue>
+#include <iostream>
 
 namespace Protector {
 const int MAXN = 520;
-const int MAXE = 7500;
+const int MAXE = 8500;
 const int DST = 0;
 const int FLOW = 2;
 const int NXT = 1;
-
+const int INF = 0x3f3f3f3f;
 class Dinic {
 private:
     queue<int> q;
@@ -19,7 +20,7 @@ private:
     int now[MAXN];
     int layer[MAXN];
     int edge[MAXE][3];
-    char vis[MAXN];
+    char vis[MAXN * 5];
     int src, dst;
     int tot_flow;
     int size;
@@ -41,19 +42,20 @@ private:
             nd = q.front();
             q.pop();
             for (i = head[nd]; i; i = edge[i][NXT]) {
+                
                 if (edge[i][FLOW] && !vis[t = edge[i][DST]]) {
-                    push(t);
+                    push(t, layer[nd] + 1);
                 }
             }
         }
-        return vis[t];
+        return vis[dst];
     }
     
-    int getFlow(int nd, int mx_flow) {
+    int getFlow(int nd, int mx_flow = INF) {
         if (nd == dst) {
             tot_flow += mx_flow;
             return mx_flow;
-        } 
+        }
         int i, t, use = 0;
         for (; i = now[nd]; now[nd] = edge[i][NXT]) {
             if (edge[i][FLOW] && layer[t = edge[i][DST]] > layer[nd]) {
@@ -85,7 +87,7 @@ public:
     }
     
     void setMax(int n) {
-        size = n;
+        size = n + 1;
     }
     
     void clear() {
@@ -97,7 +99,7 @@ public:
     void add(int src, int dst, int flow) {
         e_idx++;
         edge[e_idx][DST] = dst;
-        edge[e_dst][FLOW] = flow;
+        edge[e_idx][FLOW] = flow;
         edge[e_idx][NXT] = head[src];
         head[src] = e_idx;
     }
@@ -107,6 +109,10 @@ public:
             memcpy(now, head, size * sizeof(int));
             while (getFlow(src));
         }
+    }
+    
+    int getVis(int nd) {
+        return vis[nd];
     }
     
     int getMaxFlow() {
@@ -144,6 +150,8 @@ template <typename Type>
     int org[505];
     int e_idx;
     int idx;
+
+    
     void add(int a, int b) {
         e_idx++;
         edge[e_idx][DST] = b;
@@ -153,15 +161,17 @@ template <typename Type>
     
     _Main() {
         int i, j, k;
-        int i;
         int n, m;
         int a, b;
         int t;
         int cst[2];
+        int src, dst;
+        int I;
         u c;
+        read(n); read(m);
         for (i = 1; i <= m; i++) {
             read(a); read(b);
-            add(a, b); read(b, a);
+            add(a, b); add(b, a);
         }
         read(t);
         for (i = 1; i <= t; i++) {
@@ -169,10 +179,10 @@ template <typename Type>
             know[a] = 1;
             num[a] = c;
         }
-        ans_sum = (1 << 31) - 1 | 1 << 31;
+        and_sum = (1u << 31) - 1 | 1 << 31;
         for (i = 1; i <= n; i++) {
             if (know[i]) {
-                and_sum & = num[i];
+                and_sum &= num[i];
                 or_sum |= num[i];
                 for (j = head[i]; j; j = edge[j][NXT]) {
                     if (know[t = edge[j][DST]] && t > i) {
@@ -184,36 +194,61 @@ template <typename Type>
                 org[idx] = i;
             }
         }
-        
+        dinic.setSrc(src = 0);
+        dinic.setDst(dst = idx + 1);
+        dinic.setMax(dst);
         for (I = 31; I >= 0; I--) {
-            if ((and_sum >> I & 1) == (or_sum >> I & 1) {
+            if ((and_sum >> I & 1u) == (or_sum >> I & 1u)) {
+                c = 1u << I & and_sum;
+                if (c) {
+                    for (i = 1; i <= idx; i++) {
+                        num[org[i]] |= c;
+                    }
+                }
                 continue;
             }
             for (i = 1; i <= idx; i++) {
                 cst[0] = cst[1] = 0;
                 for (j = head[org[i]]; j; j =edge[j][NXT]) {
-                    if (know[j]) {
-                        cst[num[j] >> I & 1 ^ 1]++;
-                    } else {
-                        dinic.add(i, id[j], 1);
-                        dinic.add(id[j], i, 1);
+                    if (know[t = edge[j][DST]]) {
+                        cst[num[t] >> I & 1u ^ 1u]++;
+                    } else if (id[t] > i){
+                        dinic.add(i, id[t], 1u);
+                        dinic.add(id[t], i, 1u);
                     }
                 }
-                for (j = 0; j < 2; j++) {
-                    if (cst[j]) {
-                        dinic.add()
-                        
-                    }
+                if (cst[0]) {
+                    dinic.add(src, i, cst[0]);
+                    dinic.add(i, src, 0);
+                }
+                if (cst[1]) {
+                    dinic.add(i, dst, cst[1]);
+                    dinic.add(dst, i, 0);
+                }
+            }
+            dinic.run();
+            for (i = 1; i <= idx; i++) {
+                if (dinic.getVis(i)) {
+                    num[org[i]] |= 1u << I;
                 }
             }
             if (I) {
                 dinic.clear();
             }
         }
+        for (i = 1; i <= n; i++) {
+            printf("%u\n", num[i]);
+        }
     }
-    
     
 }jsk;
 
 
 }
+
+
+//不要用 unsigned 判>=0 
+//size = n + 1 
+//参数省略还是小心点
+//push(t, layer[nd] + 1) 第二个参数别忘了。 
+//双向边不要算两次 
