@@ -7,7 +7,7 @@ string dataName = "data";
 string bruteName = "std";
 string stdName = "½»Ò×";
 
-bool make_data = true;
+bool make_data = false;
 bool run_ans = true;
 
 int beg = 0
@@ -37,25 +37,25 @@ void make(){
 		outfile=dataName+to_string(I)+".in";
 		cerr<<"Make "<<outfile<<endl;
 		ofstream output(outfile.c_str());
-        n = 1000; m = 100;
+        n = 10; m = 5;
         output << n << " " << m <<endl;
 
 		for (i = 1; i <= n; i++) {
-            output << lrand(0, 1000) << " ";
+            output << lrand(0, 5) << " ";
 		}
 		output << endl;
 		for (i = 1; i <= m; i++) {
-		    b = lrand(1, n);
+		    b = lrand(1, 3);
 		    for (j = 1; j <= b; j++) {
 		        arr[j] = lrand(1, n);
 		    }
 		    sort(arr + 1, arr + b + 1);
-		    b = unique(arr + 1, arr + n + 1) - arr - 1;
+		    b = unique(arr + 1, arr + b + 1) - arr - 1;
 		    output << b << " ";
             for (j = 1; j <= b; j++) {
                 output << arr[j] << " ";
             }
-            output << lrand(0, 1000) <<endl;
+            output << lrand(0, 5) <<endl;
 		}
 		EndFor1:
 		output.close();

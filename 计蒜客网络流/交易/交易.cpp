@@ -5,7 +5,6 @@ int main() {}
 #include <algorithm>
 #include <queue>
 #include <cstring>
-#include <iostream>
 
 namespace OI {
 const int 
@@ -24,7 +23,8 @@ int src, dst, size;
 class Dinic{
 public:
     int edge[MAXE][3];
-    int head[MAXN], now[MAXN];
+    int head[MAXN];
+    int now[MAXN];
     int layer[MAXN];
     int tot_flow;
     int eidx;
@@ -63,7 +63,7 @@ public:
                 t = getFlow(t, min(mx_flow - use, edge[i][FLOW]));
                 if (t) {
                     edge[i][FLOW] -= t;
-                    edge[i ^ 1][FLOW] -= t;
+                    edge[i ^ 1][FLOW] += t;
                     use += t;
                     if (use == mx_flow) {
                         break;
@@ -113,7 +113,7 @@ template <typename Type>
     int pigs[1005];
     int fa[1005];
     _Main() {
-        int i, j, k;
+        int i, j;
         int n, m;
         int buys;
         int buy_id;
@@ -148,7 +148,6 @@ template <typename Type>
             dinic.add(buy_id, dst, buys);
             dinic.add(dst, buy_id, 0);
         }
-        cerr<<dinic.eidx<<endl;
         size = node_idx;
         dinic.run();
         printf("%d", dinic.tot_flow);

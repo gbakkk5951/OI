@@ -77,6 +77,7 @@ struct EdmondsKarp {
 } ek;  
   
 int main(void) {  
+    freopen("data0.in", "r", stdin);
     int m, n;  
     cin >> m >> n;  
     int N_pig[MAXN];  
@@ -104,7 +105,7 @@ int main(void) {
         cin >> wanted;  
         ek.AddEdge(i, t, wanted);  
     }  
-      
+      cerr<<ek.edges.size()<<endl;
     cout << ek.Maxflow(s, t);  
     return 0;  
 }  
