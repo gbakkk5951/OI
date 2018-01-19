@@ -52,7 +52,7 @@ int inline pop() {
     in_q[nd] = 0;
     return nd;
 }
-int SPFA() {
+long long SPFA() {
     memset(dis, 63, size * sizeof(lld));
     dis[src] = 0;
     push(src);
@@ -61,7 +61,6 @@ int SPFA() {
         nd = pop();
         for (i = head[nd]; i; i = edge[i][NXT]) {
             if (edge[i][FLOW] && dis[t = edge[i][DST]] > dis[nd] + edge[i][COST]) {
-//                printf("add(%lld, %lld, %lld, %lld)\n", nd, t, edge[i][FLOW], edge[i][COST]);
                 dis[t] = dis[nd] + edge[i][COST];
                 from_edge[t] = i;
                 from_node[t] = nd;
@@ -69,7 +68,6 @@ int SPFA() {
             }
         }
     }
-//    printf("dis %d = %d\n", dst, dis[dst]);
     return dis[dst];
 }
 
@@ -90,7 +88,6 @@ void getFlow() {
 
 
 void inline dir_add(lld src, lld dst, lld flow, lld cost) {
-//    printf("add(%lld, %lld, %lld, %lld)\n", src, dst, flow, cost);
     eidx++;
     edge[eidx][DST] = dst;
     edge[eidx][FLOW] = flow;
@@ -112,7 +109,6 @@ void run() {
 
 
 }cost_flow;
-int cost[3];
 
 
 struct _Main{
@@ -141,8 +137,8 @@ template <typename Type>
         read(n);
         read(cost[BUY]);
         for (i = FAST; i <= SLOW; i++) {
+            read(time[i]);   
             read(cost[i]);
-            read(time[i]);            
         }
         src = node();
         dst = node();
@@ -154,19 +150,17 @@ template <typename Type>
         }
         id[n + 1][0] = dst;
         cost_flow.add(src, id[1][0], LINF, cost[BUY]);
-        int tot = 0;
         for (i = 1; i <= n; i++) {
             read(need);
-            tot += need;
             base -= (lld)MIN_COST * need;
             cost_flow.add(id[i][0], id[i][1], need, MIN_COST);
-            cost_flow.add(id[i][0], id[i + 1][0], INF, 0);
+            cost_flow.add(id[i][0], id[i + 1][0], LINF, 0);
             for (j = FAST; j <= SLOW; j++) {
                 if (i + time[j] <= n) {
                     cost_flow.add(id[i][1], id[i + time[j]][0], LINF, cost[j]);
                 }
             }
-            cost_flow.add(id[i][1], dst, INF, 0);
+            cost_flow.add(id[i][1], dst, LINF, 0);
         }
         
         size = node_idx;
