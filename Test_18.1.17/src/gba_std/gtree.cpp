@@ -110,7 +110,7 @@ class Divider {
             fact[nd].push_back(n);
             return;
         }
-        
+        /*
         if (n <= 1e4) {
             int i;
             for (i = 0; pf(prime[i]) <= n; i++) {
@@ -126,6 +126,7 @@ class Divider {
             }
             return;
         }
+        */
         
 //        printf("div %d\n", n);
         int x, y, t, cnt;
@@ -156,6 +157,7 @@ public:
         int i;
         this->nd = nd;
         int rem = num[nd];
+        
         if (rem > 1e7) {
             
             for (i = pidx - 1; i >= pidx - 100; i--) {
@@ -174,10 +176,14 @@ public:
             div(num[nd]);
         }
         
-        
+
         
         sort(fact[nd].begin(), fact[nd].end());
         fact[nd].resize(unique(fact[nd].begin(), fact[nd].end()) - fact[nd].begin());
+        for (i = 0; i < fact[nd].size(); i++) {
+            printf("%d ", fact[nd][i]);
+        }
+        printf("\n");
     }
     /*
     void tst() {
@@ -228,10 +234,13 @@ template <typename Type>
         }
     }
     _Main() {
-        freopen("gtree_ex1.in", "r", stdin);
+        srand(156);
+        num[169] = 169;
+        divider.divide(169);
+//        freopen("gtree_ex1.in", "r", stdin);
 //        freopen("gtree.out", "w", stdout);
         
-        srand(156);
+        
         int n, i, j, k
         , a, b, c;
         int idx = 0;

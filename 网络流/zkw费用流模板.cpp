@@ -1,67 +1,102 @@
 #include <cstdio>
 #include <cstring>
+#include <algorithm>
+
 using namespace std;
-const int maxint=~0U>>1;
+const int MAXINT = ~0U >> 1;
 
-int n,m,pi1,cost=0;
-bool v[550];
-struct etype
+int n, m, base, tot_cost = 0;
+bool vis[550];
+struct Edge
 {
-    int t,c,u;
-    etype *next,*pair;
-    etype(){}
-    etype(int t_,int c_,int u_,etype* next_):
-        t(t_),c(c_),u(u_),next(next_){}
-    void* operator new(unsigned,void* p){return p;}
-} *e[550];
+    int dst, cost, flow;
+    Edge *next, *pair;
+    
+    Edge() {
+    
+    }
+    
+    Edge(int t_, int c_, int u_, Edge* next_) {
+        dst = t_;
+        cost = c_;
+        flow = u_;
+        next = next_;
+    }
+    
+    void* operator new(size_t, void* p) {
+        return p;
+    }
+} *edge[550];
 
-int aug(int no,int m)
+int augment(int nd, int mx_flow)
 {
-    if(no==n)return cost+=pi1*m,m;
-    v[no]=true;
-    int l=m;
-    for(etype *i=e[no];i;i=i->next)
-        if(i->u && !i->c && !v[i->t])
+    if(nd == n) {
+        tot_cost += base * mx_flow;
+        return mx_flow;
+    }
+    vis[nd] = true;
+    int rem = mx_flow, t;
+    for(Edge *i = edge[nd]; i; i = i->next) {
+        if(i->flow && !i->cost && !vis[i->dst])
         {
-            int d=aug(i->t,l<i->u?l:i->u);
-            i->u-=d,i->pair->u+=d,l-=d;
-            if(!l)return m;
+            t = augment(i->dst, min(i->flow, rem));
+            if (t) {
+                i->flow -= t;
+                i->pair->flow += t;
+                rem -= t;
+                if(!rem) {
+                    return mx_flow;
+                }
+            }
         }
-    return m-l;
+    }
+    return mx_flow - rem;
 }
 
-bool modlabel()
+bool getLabel()
 {
-    int d=maxint;
-    for(int i=1;i<=n;++i)if(v[i])
-        for(etype *j=e[i];j;j=j->next)
-            if(j->u && !v[j->t] && j->c<d)d=j->c;
-    if(d==maxint)return false;
-    for(int i=1;i<=n;++i)if(v[i])
-        for(etype *j=e[i];j;j=j->next)
-            j->c-=d,j->pair->c+=d;
-    pi1 += d;
+    int delta = MAXINT;
+    for(int i = 1; i <= n; ++i) {
+        if (vis[i]) {
+            for (Edge *j = edge[i]; j; j = j->next) {
+                if (j->flow && !vis[j->dst]) {
+                    delta = min(j->cost, delta);            
+                }
+            }
+        }
+    }
+    if(delta == MAXINT) {
+        return false;
+    }
+    for (int i = 1; i <= n; ++i) {
+        if (vis[i]) {
+            for(Edge *j = edge[i]; j; j = j->next) {
+                j->cost -= delta;
+                j->pair->cost += delta;      
+            }
+        }
+    }
+    base += delta;
     return true;
 }
 
 int main()
 {
-    freopen("costflow.in","r",stdin);
-    freopen("costflow.out","w",stdout);
-    scanf("%d %d",&n,&m);
-    etype *Pe=new etype[m+m];
-    while(m--)
-    {
-        int s,t,c,u;
-        scanf("%d%d%d%d",&s,&t,&u,&c);
-        e[s]=new(Pe++)etype(t, c,u,e[s]);
-        e[t]=new(Pe++)etype(s,-c,0,e[t]);
-        e[s]->pair=e[t];
-        e[t]->pair=e[s];
+    scanf("%d %d", &n, &m);
+    Edge *pool = new Edge[m + m];
+    while (m--) {
+        int src, dst, cost, flow;
+        scanf("%d%d%d%d", &src, &dst, &flow, &cost);
+        edge[src] = new(pool++)Edge(dst,  cost, flow, edge[src]);
+        edge[dst] = new(pool++)Edge(src, -cost, 0, edge[dst]);
+        edge[src]->pair = edge[dst];
+        edge[dst]->pair = edge[src];
     }
-    do do memset(v,0,sizeof(v));
-    while(aug(1,maxint));
-    while(modlabel());
-    printf("%d\n",cost);
+    do {
+        do {
+            memset(vis, 0, sizeof(vis));
+        } while (augment(1, MAXINT));
+    } while (getLabel());
+    printf("%d\n", tot_cost);
     return 0;
 }

@@ -16,9 +16,11 @@ const int
     FLOW = 2,
     COST = 3,
     MAXN = 2010,
-    MAXE = 12000,
+    MAXE = 13000,
     MIN_COST = -2e7,
-    INF = 0x3f3f3f3f
+    INF = 0x3f3f3f3f,
+    USE = 0,
+    STORGE = 1 
 ;
 const lld LINF = 0x3f3f3f3f3f3f3f3fLL;
 int src, dst, size;
@@ -102,7 +104,7 @@ void inline add(lld src, lld dst, lld flow, lld cost) {
 
 
 void run() {
-    while (SPFA() < 0) {
+    while (SPFA() < LINF) {
         getFlow();
     }
 }
@@ -133,7 +135,6 @@ template <typename Type>
         int i, j, k;
         int n;
         int need;
-        lld base = 0;
         read(n);
         read(cost[BUY]);
         for (i = FAST; i <= SLOW; i++) {
@@ -148,24 +149,24 @@ template <typename Type>
                 id[i][j] = node();
             }
         }
-        id[n + 1][0] = dst;
-        cost_flow.add(src, id[1][0], LINF, cost[BUY]);
+        
         for (i = 1; i <= n; i++) {
             read(need);
-            base -= (lld)MIN_COST * need;
-            cost_flow.add(id[i][0], id[i][1], need, MIN_COST);
-            cost_flow.add(id[i][0], id[i + 1][0], LINF, 0);
+            cost_flow.add(src, id[i][USE], LINF, cost[BUY]);
+            cost_flow.add(id[i][USE], dst, need, 0);
+            cost_flow.add(src, id[i][STORGE], need, 0);
+            if (i + 1 <= n) {
+                cost_flow.add(id[i][USE], id[i + 1][USE], LINF, 0);
+            }
             for (j = FAST; j <= SLOW; j++) {
                 if (i + time[j] <= n) {
-                    cost_flow.add(id[i][1], id[i + time[j]][0], LINF, cost[j]);
+                    cost_flow.add(id[i][STORGE], id[i + time[j]][USE], LINF, cost[j]);
                 }
             }
-            cost_flow.add(id[i][1], dst, LINF, 0);
         }
-        
         size = node_idx;
         cost_flow.run();
-        printf("%lld", base + cost_flow.tot_cost);
+        printf("%lld", cost_flow.tot_cost);
     }
     
     
