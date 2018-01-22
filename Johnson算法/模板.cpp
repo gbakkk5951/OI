@@ -132,7 +132,6 @@ template<typename Type>
                 }
             }
         }
-        return 1;
         for (i = 1; i <= n; i++) {
             for (j = head[i]; j; j = edge[j][NXT]) {
                 edge[j][DIS] += label[i] - label[edge[j][DST]];

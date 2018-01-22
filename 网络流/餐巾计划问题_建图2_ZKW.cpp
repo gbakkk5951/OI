@@ -74,8 +74,7 @@ lld getFlow(int nd, lld mx_flow) {
         return mx_flow;
     }
     int i;
-    lld t;
-    lld use = 0;
+    lld t, use = 0;
     vis[nd] = 1;
     for (i = head[nd]; i; i = edge[i][NXT]) {
         if (edge[i][FLOW] && !edge[i][COST] && !vis[t = edge[i][DST]]) {
