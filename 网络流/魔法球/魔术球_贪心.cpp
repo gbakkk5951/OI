@@ -30,30 +30,25 @@ int main() {
 				if (v[i].empty() || isSquareNumber(v[i].back() + x)) {
 					v[i].push_back(x++);
 					flag = true;
-					printf("%d <- %d\n", i, x - 1);
-                    /*
-		            for (j = 0; j < k; j++) {
-		                for (j_ = 0; j_ < v[j].size(); j_++) {
-		                    printf("%d ", v[j][j_]);
-		                }
-		                printf("\n");
-		            }	*/
-                    printf("\n");		
 					break;
 
 				}
 			}
 			if (!flag) break;
 		}
+		printf("[%d]\n",k);
+    	for (int i = 0; i < k; i++) {
+    		for (int j = v[i].size()-1; j >= 0; j--) printf("%2d ", v[i][j]);
+    		printf("\n");
+    	}	
+        printf("\n");	
 //		printf("[%d]%d\n", k, x - 1);
 	}
 
-	printf("%d\n", x - 1);
+//	printf("%d\n", x - 1);
     
-    /*
-	for (int i = 0; i < n; i++) {
-		for (size_t j = 0; j < v[i].size(); j++) printf("%d%c", v[i][j], j == v[i].size() - 1 ? '\n' : ' ');
-	}*/
+    
+
 
 	return 0;
 }
