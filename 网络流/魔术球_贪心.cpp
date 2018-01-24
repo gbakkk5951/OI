@@ -4,7 +4,7 @@
 #include <cmath>
 #include <vector>
 
-const int MAXN = 1000;
+const int MAXN = 1005;
 
 int n;
 
@@ -15,12 +15,12 @@ inline bool isSquareNumber(int x) {
 }
 std::vector<int> v[MAXN];
 int main() {
-    freopen("out.txt", "w", stdout);
+//    freopen("out.txt", "w", stdout);
 //	scanf("%d", &n);
     int I;
     
 	int x = 1;
-	n = 10;
+	n = 1000;
 	int j, j_;
 	for (int k = 1; k <= n; k++) {
 		while (1) {
@@ -30,7 +30,7 @@ int main() {
 				if (v[i].empty() || isSquareNumber(v[i].back() + x)) {
 					v[i].push_back(x++);
 					flag = true;
-					printf("%d <- %d\n", i, x - 1);
+//					printf("%d <- %d\n", i, x - 1);
                     /*
 		            for (j = 0; j < k; j++) {
 		                for (j_ = 0; j_ < v[j].size(); j_++) {
@@ -38,7 +38,7 @@ int main() {
 		                }
 		                printf("\n");
 		            }	*/
-                    printf("\n");		
+//                    printf("\n");		
 					break;
 
 				}
