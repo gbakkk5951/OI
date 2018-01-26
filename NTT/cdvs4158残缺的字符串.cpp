@@ -3,11 +3,12 @@ int main() {}
 #include <cstdio>
 #include <cctype>
 #include <algorithm>
-#include <ctime>
+//#include <ctime>
 namespace Protector {
 typedef long long lld;
 const lld 
-    MOD = (7LL << 52) + 1,
+    MOD = (479LL << 21) + 1,
+//    MOD = (7LL << 52) + 1,
     PHI = MOD - 1,
     G = 3
 ;
@@ -89,14 +90,20 @@ struct _Main {
     int xishu[4];
     _Main() {
         int i, j, k, I, len, cnt;
-/*        l[1] = 150000;
-        l[0] = 2 * l[1]; 
-        for (i = 0; i < 2; i++) {
-            for (j = 0; j < l[i]; j++) {
-                s[i][j] = '*';
-            }
+        
+        l[1] = 29708 + 19205;
+        l[0] = 29708 + 19205; 
+        for (j = 0; j < 29708; j++) {
+            s[0][j] = 'i';
+            s[1][j] = 'z';
         }
-*/
+        for (j = 29708; j < l[1]; j++) {
+            s[0][j] = 'b';
+            s[1][j] = 'a';
+        }
+        
+//        float ta = clock();
+/*
         scanf("%d%d", &l[1], &l[0]);
 
         if (l[1] > l[0]) {
@@ -104,8 +111,8 @@ struct _Main {
             return;
         }
         scanf("%s%s", s[1], s[0]);
-
-        float ta = clock();
+*/
+        
         for (i = 0; i < (l[1] >> 1); i++) {
             swap(s[1][i], s[1][l[1] - i - 1]);
         }
@@ -144,16 +151,18 @@ struct _Main {
                 cnt++;
             }
         }
-        
+    
         
         printf("%d\n", cnt);
         
         for (i = l[1] - 1; i < l[0]; i++) {
+            printf("ans[%d] = %d\n", i, ans[i]);
             if (ans[i] == 0) {
                 printf("%d ", i - l[1] + 2);
             }
         }
-//        printf("%f", clock() - ta);
+        /*
+        printf("%f", clock() - ta);*/
     }
 }cdvs4158;
 

@@ -57,7 +57,7 @@ int ans[N];
 int st[M],top;
 int main()
 {
-    /*
+    
     nn = 150000, mm = 300000;
     for (int i = 0; i < nn; i++) {
         s3[i] = '*';
@@ -66,10 +66,10 @@ int main()
         s2[j] = '*';
     }
     float ta = clock();
-    */
+    /*
     scanf("%d%d",&nn,&mm);
     scanf("%s",s3);scanf("%s",s2);
-    
+    */
     int l=0;
     for(n=1;n<2*mm;n<<=1)l++;
     for(int i=0;i<n;i++)R[i]=(R[i>>1]>>1)|((i&1)<<(l-1));
@@ -130,15 +130,15 @@ int main()
             st[++top]=i-nn+2;
         }
     }
-    
+    /*
     printf("%d\n",top);
     for(int i=1;i<=top;i++)
     {
         if(i!=top)printf("%d ",st[i]);
         else printf("%d\n",st[i]);
-    }
-    /*
+    }*/
+    
     printf("uese %lf", clock() - ta);
-    */
+    
     return 0;
 }
