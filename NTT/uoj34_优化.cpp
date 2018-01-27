@@ -3,26 +3,27 @@ int main() {}
 #include <cstdio>
 #include <cctype>
 #include <algorithm>
-#include <cmath>
 
 namespace Protector {
+typedef long long lld;
+const lld
+    MOD = (479LL << 21) + 1,
+    PHI = MOD - 1,
+    G = 3
+;
 
-struct Complex {
-    double x[2];
-    Complex operator + (const Complex &b) const {
-        return Complex{x[0] + b.x[0], x[1] + b.x[1]};
+lld fastpower(lld base, lld pow) {
+    lld ret = 1;
+    pow = (pow % PHI + PHI) % PHI;
+    while (pow) {
+        if (pow & 1) {
+            ret = ret * base % MOD;
+        }
+        pow >>= 1;
+        base = base * base % MOD;
     }
-    Complex operator - (const Complex &b) const {
-        return Complex{x[0] - b.x[0], x[1] - b.x[1]};
-    }    
-    Complex operator * (const Complex &b) const {
-        return Complex{x[0] * b.x[0] - x[1] * b.x[1], x[0] * b.x[1] + x[1] * b.x[0]};
-    }
-};
-typedef Complex lld;
-const double PI = acos(-1.0);
-
-
+    return ret;
+}
 void mov_ele(lld arr[], int len) {
     int i, j, k;
     for (i = 1, j = 0; i < len; i++) {
@@ -35,34 +36,40 @@ void mov_ele(lld arr[], int len) {
         }
     }
 } 
-void FFT(lld arr[], int len, int rev = 1) {
+
+void NTT(lld arr[], int len, int rev = 0) {
     static lld w[140000];
     lld *a, *b;
-    lld x, wn;
+    lld wn, y;
     int i, j, k, half;
     mov_ele(arr, len);
-    w[0] = Complex{1, 0};  
+    rev = rev ? -1 : 1;
+    w[0] = 1;
     for (i = 1; 1 << i <= len; i++) {
-        wn = Complex{cos(2.0 * PI / (1 << i)), rev * sin(2.0 * PI / (1 << i))};
+        wn = fastpower(G, rev * PHI >> i);
         half = 1 << i - 1;
-        for (j = half; j > 0; j-= 2) {
+        for (j = half; j >= 0; j -= 2) {
             w[j] = w[j >> 1];
         }
         for (j = 1; j < half; j += 2) {
-            w[j] = w[j - 1] * wn;
+            w[j] = w[j - 1] * wn % MOD;
         }
         for (j = 0; j < len; j += half << 1) {
             a = &arr[j]; b = a + half;
             for (k = 0; k < half; k++) {
-                x = b[k] * w[k];
-                b[k] = a[k] - x;
-                a[k] = a[k] + x;
+                y = b[k] * w[k];
+                b[k] = (a[k] - y) % MOD;       
+                a[k] = (a[k] + y) % MOD;
             }
         }
     }
     if (rev == -1) {
+        wn = fastpower(len, -1);
         for (i = 0; i < len; i++) {
-            arr[i].x[0] /= len;
+            arr[i] = arr[i] * wn % MOD;
+            if (arr[i] < 0) {
+                arr[i] += MOD;
+            }            
         }
     }
 }
@@ -86,21 +93,20 @@ lld a[270000], b[270000];
         int n, m;
         read(n); read(m);
         for (len = 1; len < (n + m + 2); len <<= 1);
-        
         for (i = 0; i <= n; i++) {
-            read(a[i].x[0]);
+            read(a[i]);
         }
         for (i = 0; i <= m; i++) {
-            read(b[i].x[0]);
+            read(b[i]);
         }
-        FFT(a, len);
-        FFT(b, len);
+        NTT(a, len);
+        NTT(b, len);
         for (i = 0; i < len; i++) {
-            a[i] = a[i] * b[i];
+            a[i] = a[i] * b[i] % MOD;
         }
-        FFT(a, len, -1);
+        NTT(a, len, 1);
         for (j = 0; j <= n + m; j++) {
-            printf("%lld ", (long long)round(a[j].x[0]));
+            printf("%lld ", a[j]);
         }
     }
     
