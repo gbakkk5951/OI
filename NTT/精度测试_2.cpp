@@ -9,8 +9,8 @@ namespace OI {
 typedef long long lld;
 const lld 
     MOD = (7LL << 52) + 1,
-    DELTA = 10000, 
-    BEG = MOD - DELTA * 340
+    DELTA = 10, 
+    BEG = 3743134592LL
     ; 
 struct _Main {
     lld O1mul(lld a, lld b) {
@@ -58,9 +58,11 @@ struct _Main {
                     }                    
                 }
             }
-            printf("(%lld)[%lld] finished\n", ((MOD - i) / DELTA + 1), ((MOD - i) / DELTA + 1) * DELTA);
+            if ((BEG - i ) % 5000000 == 0)
+            printf("%lld\n", i);
+//            printf("(%lld)[%lld] finished\n", ((MOD - i) / DELTA + 1), ((MOD - i) / DELTA + 1) * DELTA);
         }
-       
+        printf("finish");
         
     }
     

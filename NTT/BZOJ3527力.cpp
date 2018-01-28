@@ -5,7 +5,7 @@ int main() {}
 #include <algorithm>
 #include <cctype>
 #include <cstring>
-
+ 
 namespace OI {
 struct Complex;    
 typedef Complex com;
@@ -52,7 +52,7 @@ void FFT(com arr[], int len, int pow = 1) {
     for (i = 1; 1 << i <= len; i++) {
         wn = (com) {cos(2.0 * PI / ( 1 << i)), pow * sin(2.0 * PI / (1 << i))};
         half = 1 << i - 1;
-        for (j = half - 2; j > 0; j -= 2) {
+        for (j = half; j > 0; j -= 2) {
             w[j] = w[j >> 1];
         }
         for (j = 1; j < half; j += 2) {
@@ -73,10 +73,10 @@ void FFT(com arr[], int len, int pow = 1) {
         }
     }
 }
-
-
+ 
+ 
 struct _Main {
-
+ 
 _Main() {
     int i, j, k;
     int len, n;
@@ -84,35 +84,35 @@ _Main() {
     for (i = 0; i < n; i++) {
         scanf("%lf", &A[i].x);
     }
-    /*
+     
     memcpy(B, A, n * sizeof(com));
     for (i = 0; i < n / 2; i++) {
         swap(B[i], B[n - i - 1]);
     }
     for (i = 1; i < n; i++) {
-        div[i].x = 1.0 / (i * i);
+        div[i].x = 1.0 / ((double)i * i);
     }
-    */
+    
     for (len = 1; len < n << 1; len <<= 1); 
     FFT(A, len);
-    /*FFT(B, len);
+    FFT(B, len);
     FFT(div, len);
     for (i = 0; i < len; i++) {
         B[i] = B[i] * div[i];
     }
     for (i = 0; i < len; i++) {
         A[i] = A[i] * div[i];
-    }*/
+    }
     FFT(A, len, -1);
-    //FFT(B, len, -1);
-    for (i = 0; i < len; i++) {
-        printf("%f\n", A[i].x + B[n - i - 1].x);
+    FFT(B, len, -1);
+    for (i = 0; i < n; i++) {
+        printf("%.3f\n", A[i].x - B[n - i - 1].x);
     }
 }
-    
-    
-    
+     
+     
+     
 }BZOJ3527;
-
-
+ 
+ 
 }
