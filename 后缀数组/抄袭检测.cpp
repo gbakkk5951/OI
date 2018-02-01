@@ -1,52 +1,55 @@
 using namespace std;
 int main() {}
 #include <cstdio>
-#include <cctype>
-#include <algorithm>
 #include <cstdlib>
+#include <cctype>
 #include <cstring>
-
+#include <algorithm>
 namespace OI {
 typedef long long lld;
-const int INF = 0x3f3f3f3f;
+const int 
+    INF = 0x3f3f3f3f
+;
 int lrand() {
     return rand() << 15 | rand();
 }
-inline double mid(double l, double r) {
-    return (l + r) / 2.0;
-}
 
+double inline mid(double a, double b) {
+    return (a + b) / 2.0;
+}
 struct Node {
     int val, rand;
+    Node *son[2], *fa;
     double m[2], v;
-    Node *fa,*son[2];
     void mark(double l, double r) {
         m[0] = l; m[1] = r; v = mid(l, r);
     }
-    void * operator new (size_t, int, Node*);
-    
-}pool[1011];
-Node *node[1011];
-int pidx;
+    void *operator new(size_t, int, Node*);
+}pool[200010];
+Node *node[200010];
 
-void * Node:: operator new(size_t, int val, Node* fa) {
+int pidx;
+void * Node::operator new(size_t, int val, Node *fa = 0) {
     Node *nd = &pool[pidx++];
     nd->fa = fa;
-    nd->rand = lrand();
     nd->val = val;
     node[val] = nd;
+    nd->rand = lrand();
     return nd;
 }
-
-
-int sa[1010], rank[1010], height[1010];
+int sa[200010], rank[200010], height[200010];
 
 class SuffixHeap {
 public:
     int *str, len;
     Node *root;
     double tot;
-    
+    int cmp(int idx, Node *nd) {
+        if (str[idx] != str[nd->val]) {
+            return str[idx] > str[nd->val];
+        }
+        return tot > node[nd->val + 1]->v;
+    }
     void rotate(Node *nd) {
         Node *fa = nd->fa, *gfa = fa->fa, *s;
         nd->fa = gfa;
@@ -62,12 +65,6 @@ public:
         fa->fa = nd;
     }
     
-    int cmp(int idx, Node *nd) {
-        if (str[idx] != str[nd->val]) {
-            return str[idx] > str[nd->val];
-        }
-        return tot > node[nd->val + 1]->v;
-    }
     void insert(int idx) {
         Node *nd = root;
         while (1) {
@@ -75,40 +72,43 @@ public:
             if (nd->son[pos]) {
                 nd = nd->son[pos];
             } else {
-                nd->son[pos] = new(idx, nd)Node;
+                nd->son[pos] = new(idx, nd) Node;
                 nd = nd->son[pos];
-                break;
-            }
+                return;
+            }            
         }
-        while (nd->fa && nd->fa->rand < nd->rand) {
+        while (nd->fa && nd->fa->rand > nd->rand) {
             rotate(nd);
         }
-        new_mark(nd);
+        mark_new(nd);
     }
-    void new_mark(Node *nd) {
+    
+    void mark_new(Node *nd) {
         double m[2] = {0, 1};
-        if (nd->fa) {
-            int pos = nd == nd->fa->son[1];
-            m[pos] = nd->fa->m[pos];
-            m[pos ^ 1] = nd->fa->v;
+        Node *fa = nd->fa;
+        if (fa) {
+            int pos = nd == fa->son[1];
+            m[pos] = fa->m[pos];
+            m[pos ^ 1] = fa->v;
         } else {
             root = nd;
         }
         remark(nd, m[0], m[1]);
         tot = nd->v;
     }
+    
     void remark(Node *nd, double l, double r) {
         if (nd) {
-            nd->mark(l, r);   
+            nd->mark(l, r);
             remark(nd->son[0], l, nd->v);
-            remark(nd->son[1], nd->v, r);
+            remark(nd->son[1], nd->v, r);   
         }
     }
     
     void getSa(Node *nd, int &idx) {
         if (nd) {
             getSa(nd->son[0], idx);
-            sa[idx++] = nd->val;
+            sa[idx++] = nd->val;   
             getSa(nd->son[1], idx);
         }
     }
@@ -119,8 +119,8 @@ public:
         }
     }
     void getHeight() {
-        int i, j, k = 0;
-        for (i = 0; i < len - 1; i++) {
+        int i, j, k;
+        for (i = 0, k = 0; i < len - 1; i++) {
             j = sa[rank[i] - 1];
             for (k ? k-- : 0; str[i + k] == str[j + k]; k++);
             height[rank[i]] = k;
@@ -129,75 +129,51 @@ public:
     
     void build(int *_str, int _len) {
         str = _str; len = _len;
-        int i, idx = 0;
-        root = new(len - 1, 0)Node;
+        root = new(len - 1)Node;
         root->mark(0, 1);
         tot = root->v;
+        int i, idx = 0;
         for (i = len - 2; i >= 0; i--) {
             insert(i);
-        }     
+        }
         getSa(root, idx);
         getRank();
         getHeight();
     }
+
 }tree;
 
 
 
-
 struct _Main {
-    
-    int readStr(int *arr) {
-        int idx = 0, t; 
+    int arr[200010];
+    int readStr(int *str) {
+        int idx = 0, t;
         while (!isalpha(t = getchar()));
         do {
-            arr[idx++] = t;
-        } while (isalpha(t = getchar()));
+            str[idx++] = t;
+        } while ( isalpha(t = getchar()));
         return idx;
     }
-    
-    
-    int arr[1010];
     int n;
-    lld ans;
-    void getAns() {
-        int i, j, k;
-        
-        for (i = 1; i <= n >> 1; i++) {
-            int mx = -INF, mn = INF;
-            for (j = 1; j < n; j++) {
-                if (height[j] >= i) {
-                    mx = max(mx, sa[j]);
-                    mn = min(mn, sa[j]);
-                } else {
-                    if (mx - mn >= i) {
-                        ans++;
-                    }
-                    mx = mn = sa[j];
-                }
-            }
-
-            if (mx - mn >= i) {
-                ans++;
-            }   
-        }
-    }
-    
     _Main() {
+        int l1, l2;
         int i, j, k;
-        n = readStr(arr);
-        arr[n++] = -INF;
+        l1 = readStr(arr);
+        arr[l1] = - INF;
+        l2 = readStr(arr + l1 + 1);
+        arr[l1 + l2 + 1] = -INF - 1;
+        n = l1 + l2 + 2;
         tree.build(arr, n);
-        getAns();
-        printf("%lld", ans);
+        for (i = 0; i < n; i++) {
+            for (j = sa[i]; j < n; j++) {
+                printf("%d ", arr[j]);
+            }
+            printf("\n");
+        }
+        
     }
-    
     
 }jsk;
 
-
-
-
 }
-
-

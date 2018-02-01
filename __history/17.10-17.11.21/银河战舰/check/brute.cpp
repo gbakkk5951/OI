@@ -38,35 +38,53 @@ struct _Main{
 			read(a);read(b);		
 			switch(oper[0]){
 		
-				case 'M':{
-					for(j=0;j<=1;j++){
+				case '0':{
+					for(j=0;j<=0;j++){
 						scanf("%lf",agr+j);
 					}
 					for(i=a;i<=b;i++){
 						x[i]+=agr[0];
-						y[i]+=agr[1];
 					}
 					break;
 				}
-				case 'X' :{
+				case '1':{
+					for(j=1;j<=1;j++){
+						scanf("%lf",agr+j);
+					}
+					for(i=a;i<=b;i++){
+						y[i]+=agr[1];
+					}
+					break;
+				}				
+				
+				case '2' :{
 					for(i=a;i<=b;i++){
 						y[i]=-y[i];
 					}					
 					break;
 				}
-				case 'Y' :{
+				case '3' :{
 					for(i=a;i<=b;i++){
 						x[i]=-x[i];
 					}				
 					break;
 				}
-				case 'O' :{
+				case '4' :{
 					for(i=a;i<=b;i++){
 						swap(x[i],y[i]);
 					}						
 					break;
 				}
-				case 'R' :{
+				case '5' : {
+					for(i=a;i<=b;i++){
+						swap(x[i],y[i]);
+						x[i] = -x[i];
+						y[i] = -y[i];
+					}										    
+					break;
+				}
+				
+				case '6' :{
 					scanf("%lf",&agr[0]);
 					for(i=a;i<=b;i++){
 						nx=x[i]*cos(agr[0]/180.0*pi)+y[i]*(-sin(agr[0]/180.0*pi));
@@ -79,7 +97,13 @@ struct _Main{
 			}
 		}
 		for(i=1;i<=n;i++){
-			printf("%.2lf %.2lf\n",x[i],y[i]);
+		    if (x[i] > - 1e-6 && x[i] < 1e-6) {
+		        x[i] = 0;
+		    }
+		    if (y[i] > - 1e-6 && y[i] < 1e-6) {
+		        y[i] = 0;
+		    }
+			printf("%.2lf %.2lf \n",x[i],y[i]);
 		}
 	}
 	
