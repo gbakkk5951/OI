@@ -48,6 +48,9 @@ public:
         if (str[idx] != str[nd->val]) {
             return str[idx] > str[nd->val];
         }
+        if (tot < 1e-6) {
+            printf("???");
+        }
         return tot > node[nd->val + 1]->v;
     }
     void rotate(Node *nd) {
@@ -74,8 +77,8 @@ public:
             } else {
                 nd->son[pos] = new(idx, nd) Node;
                 nd = nd->son[pos];
-                return;
-            }            
+                break;
+            }
         }
         while (nd->fa && nd->fa->rand > nd->rand) {
             rotate(nd);
@@ -131,7 +134,6 @@ public:
         str = _str; len = _len;
         root = new(len - 1)Node;
         root->mark(0, 1);
-        tot = root->v;
         int i, idx = 0;
         for (i = len - 2; i >= 0; i--) {
             insert(i);
@@ -155,9 +157,25 @@ struct _Main {
         } while ( isalpha(t = getchar()));
         return idx;
     }
+    int exist(int len) {
+        int mx = -INF, mn = INF;
+        int i;
+        for (i = 0; i < n; i++) {
+            if (height[i] < len) {
+                mx = mn = sa[i];
+            }
+            mx = max(mx, sa[i]);
+            mn = min(mn, sa[i]);
+            if (mx > l1 && mn < l1) {
+                return 1;
+            }
+        }
+        return 0;
+    }
+    int l1, l2;
     int n;
     _Main() {
-        int l1, l2;
+        
         int i, j, k;
         l1 = readStr(arr);
         arr[l1] = - INF;
@@ -165,13 +183,16 @@ struct _Main {
         arr[l1 + l2 + 1] = -INF - 1;
         n = l1 + l2 + 2;
         tree.build(arr, n);
-        for (i = 0; i < n; i++) {
-            for (j = sa[i]; j < n; j++) {
-                printf("%d ", arr[j]);
+        int l = 0, r = min(l1, l2), mid;
+        while (l < r) {
+            mid = l + r >> 1;
+            if (exist(mid + 1)) {
+                l = mid + 1;
+            } else {
+                r = mid;
             }
-            printf("\n");
         }
-        
+        printf("%d", l);
     }
     
 }jsk;

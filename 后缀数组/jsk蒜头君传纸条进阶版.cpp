@@ -260,13 +260,13 @@ template <typename Type>
         read(Qn);
         arr[n++] = -INF - 1;
         suffix_heap.build(arr, n);
-        /*getSum();
+        getSum();
         st.build(n);
         for (Q = 1; Q <= Qn; Q++) {
             read(v);
             query((v ^ l ^ r) + 1, l, r);
             printf("%lld %lld\n", l, r);
-        }*/
+        }
     }
     
     
