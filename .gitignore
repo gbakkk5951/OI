@@ -9,3 +9,5 @@ std.txt
 brute.txt
 output.txt
 *.dll
+*.cpp~
+*.swp
