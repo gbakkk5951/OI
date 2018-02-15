@@ -7,8 +7,9 @@
 *.dll
 *.cpp~
 *.swp
-input.txt
-std.txt
-brute.txt
-output.txt
+*std
+*input.txt
+*std.txt
+*brute.txt
+*output.txt
 

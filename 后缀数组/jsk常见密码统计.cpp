@@ -141,7 +141,7 @@ public:
 
 }tree;
 
-int ans[100010][3];
+int ans[MAXN][3];
 int ansidx;
 int f[MAXN];
 struct _Main {
@@ -271,8 +271,10 @@ struct _Main {
 			}
 			printf("\n%d\n", height[i]);
 		}*/
+		
 		getAns();
 		printAns();
+		
 	}
 
 
