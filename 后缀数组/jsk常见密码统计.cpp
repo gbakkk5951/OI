@@ -93,7 +93,7 @@ public:
 			m[pos] = f->m[pos];
 			m[pos ^ 1] = f->v;
 		} else {
-			root = f;
+			root = nd;
 		}
 		remark(nd, m[0], m[1]);
 		tot = nd->v;
@@ -205,31 +205,48 @@ struct _Main {
 	void getAns() {
 		int i;
 		int mx_len = 0;
-		this->mx_len = 1;
+		this->mx_len = 7;
 		for (i = 0; i < tot_len; i++) {
-			now_len = min(now_len, height[i]);
-			if (now_len < this->mx_len) {
+			if (height[i] < this->mx_len) {
 				mx_len = 0;
 				while (lst < i) {
 					mov_ahead();
 				}
 			}
-			while (cnt >= (n + 1) / 2 && lst < i) {
-				mov_ahead();
-			}	
-			if (lst == i) {
-				now_len = len[f[sa[i]]] - (sa[i] - beg[f[sa[i]]]);
-			}
+			
 			//printf("from %d to %d\n", lst, i);
 			//printf("now_len = %d\n", now_len);
-			add(i);
+			/*while (lst < i && cnt >= (n + 1) / 2) {
+				mov_ahead();
+			}
+			*/
+            
+			while (lst < i && cnt - (vis[f[sa[lst]]] == 1 && f[sa[lst]] != f[sa[i]]) + (vis[f[sa[i]]] == 0) >= (n + 1) / 2) {
+				mov_ahead();
+			}
+			now_len = min(now_len, height[i]);
+			if (lst == i) {
+				now_len = len[f[sa[i]]] - (sa[i] - beg[f[sa[i]]]);
+			}            
+            add(i);
 			//printf("cnt = %d\n", cnt);
-			if (cnt >= (n + 1) / 2) {
-				if (mx_len <= now_len) {
-					add_ans(sa[i], sa[i] + mx_len , sa[i] + now_len - 1);
+
+//			printf("qhead = %d, qtail = %d\n", qhead, qtail);
+			if (i == 165) {
+			    for (int j = qhead; j < qtail; j++) {
+			        printf("[%d]%d ", q[j][POS], q[j][VAL]);
+			    }
+                printf("\ncnt = %d, vis = %d, len = %d, lst = %d, mx l = %d, g = %d\n", cnt, vis[f[sa[lst]]], now_len, lst, mx_len, this->mx_len);
+			}
+            
+            
+            if (cnt >= (n + 1) / 2) {
+                if (this->mx_len <= now_len && mx_len < now_len) {
+					
+                    this->mx_len = now_len;
+                    add_ans(sa[i], sa[i] + mx_len , sa[i] + now_len - 1);
 					mx_len = now_len;
-					this->mx_len = max(mx_len, this->mx_len);
-				}	
+				}
 			}
 		}
 	}
@@ -237,7 +254,8 @@ struct _Main {
 		int i, j, k;
 		for (i = 0, j = 0; i < ansidx; i++) {
 			if (ans[i][END] - ans[i][SRC] + 1 == mx_len){
-				for (k = ans[i][SRC]; k <= ans[i][END]; k++) {
+                printf("%d ", ans[i][SRC]);
+                for (k = ans[i][SRC]; k <= ans[i][END]; k++) {
 					putchar((char)str[k]);
 				}
 				j++;
