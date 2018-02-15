@@ -4,10 +4,11 @@
 *.rar
 *.zip
 *.ans
+*.dll
+*.cpp~
+*.swp
 input.txt
 std.txt
 brute.txt
 output.txt
-*.dll
-*.cpp~
-*.swp
+
