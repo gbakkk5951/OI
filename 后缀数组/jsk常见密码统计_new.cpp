@@ -13,8 +13,7 @@ const int
 	MAXN = 100200,
 	INF = 0x3f3f3f3f,
 	SRC = 0,
-	BEG = 1,
-	END = 2,
+	END = 1,
 	POS = 0,
 	VAL = 1
 ;
@@ -141,7 +140,7 @@ public:
 
 }tree;
 
-int ans[MAXN][3];
+int ans[MAXN][2];
 int ansidx;
 int f[MAXN];
 struct _Main {
@@ -155,106 +154,102 @@ struct _Main {
 		} while (isalpha(t = getchar()));
 		return idx;
 	}
-	int lst;
 	int now_len;
 	int cnt;
+	int lst;
 	int mx_len;
+	int now_mx;
 	int vis[MAXN];
 	int q[MAXN][2];
 	int qhead, qtail;
-	void mov_ahead() {
-		int f = OI::f[sa[lst]];
-		if (f) {
-			vis[f]--;
-			if (vis[f] == 0) {
-				cnt--;
-			}
-			if (qhead < qtail && lst == q[qhead][POS]) {
-				qhead++;
-				if (qhead < qtail) {
-					now_len = q[qhead][VAL];
-				}
-			}
-		} 
-		lst++;
-		if (qhead < qtail && lst == q[qhead][POS]) {
-			now_len = len[OI::f[sa[lst]]] - (sa[lst] - beg[OI::f[sa[lst]]]);
-			if (qhead + 1 < qtail) {
-				now_len = min(now_len, q[qhead + 1][VAL]);
-			}
-		}
-	}
-	void add(int idx) {
-		int f = OI::f[sa[idx]];
-		if (f) {
-			vis[f]++;
-			//printf("vis[%d] = %d\n", f, vis[f]);
-			if (vis[f] == 1) {
-				cnt++;
-			}
-			int val = max(now_len, height[idx]);
-			while (qhead < qtail && val <= q[qtail - 1][VAL]) {
-				qtail--;
-			}
-			q[qtail][VAL] = height[idx];
-			q[qtail][POS] = idx;
-			qtail++;
-		}
-	}
-	void add_ans(int src, int beg, int end) {
+	void add_ans(int src, int end) {
 		ans[ansidx][SRC] = src;
-		ans[ansidx][BEG] = beg;
 		ans[ansidx][END] = end;
 		//printf("add(%d, %d, %d)\n", src, beg, end);
 		ansidx++;
 	}
-	void getAns() {
-		int i;
-		int mx_len = 0;
-		this->mx_len = 1;
-		for (i = 0; i < tot_len; i++) {
-			if (height[i] < this->mx_len) {
-				mx_len = 0;
-				while (lst < i) {
-					mov_ahead();
-				}
-			}
-			
-			//printf("from %d to %d\n", lst, i);
-			//printf("now_len = %d\n", now_len);
-			/*while (lst < i && cnt >= (n + 1) / 2) {
-				mov_ahead();
-			}
-			*/
-            
-			while (lst < i && cnt - (vis[f[sa[lst]]] == 1 && f[sa[lst]] != f[sa[i]]) + (vis[f[sa[i]]] == 0) >= (n + 1) / 2) {
-				mov_ahead();
-			}
-			now_len = min(now_len, height[i]);
-			if (lst == i) {
-				now_len = len[f[sa[i]]] - (sa[i] - beg[f[sa[i]]]);
-			}            
-            add(i);
-            
-			//printf("cnt = %d\n", cnt);
-
-//			printf("qhead = %d, qtail = %d\n", qhead, qtail);
-			/*if (i == 165) {
-			    for (int j = qhead; j < qtail; j++) {
-			        printf("[%d]%d ", q[j][POS], q[j][VAL]);
-			    }
-                printf("\ncnt = %d, vis = %d, len = %d, lst = %d, mx l = %d, g = %d\n", cnt, vis[f[sa[lst]]], now_len, lst, mx_len, this->mx_len);
-			}*/
-            
-            
-            if (cnt >= (n + 1) / 2) {
-                if (this->mx_len <= now_len && mx_len < now_len) {
-                    this->mx_len = now_len;
-                    add_ans(sa[i], sa[i] + mx_len , sa[i] + now_len - 1);
-					mx_len = now_len;
-				}
-			}
+	void push(int pos, int val) {
+		while (qhead < qtail && q[qtail - 1][VAL] > val) {
+			qtail--;
 		}
+		q[qtail][VAL] = val;
+		q[qtail][POS] = pos;
+		qtail++;
+		now_len = q[qhead][VAL];
+		if (now_len < now_mx) {
+			now_mx = 0;
+		}
+	}
+	char greater() {
+		int t = f[sa[lst]];
+		return cnt - (vis[t] == 1) >= (n + 1) / 2;
+	}
+	void pop() {
+		qhead++;
+		now_len = q[qhead][VAL];
+		if (now_len < now_mx) {
+			now_mx = 0;
+		}
+	}
+	void getAns() {
+		mx_len = 1;
+		int i;
+		lst = n;
+		for (i = n; i < tot_len; i++) {
+			push(i - 1, height[i]);
+			push(i, getLen(sa[i]));
+				
+			
+			if (++vis[f[sa[i]]] == 1) {
+				cnt++;
+				
+//				printf("vis[%d] = %d\n", f[sa[i]], vis[f[sa[i]]]);
+			}
+			if (now_mx > now_len) {
+				now_mx = 0;
+			}
+//			printf("bef\n");
+//			for (int j = qhead; j < qtail; j++) {
+//				printf("q %d val = %d\n", q[j][POS], q[j][VAL]);
+//			} 	
+			while (qhead < qtail) {
+				while(q[qhead][POS] < lst) {
+					pop();
+					if (now_mx > now_len) {
+						now_mx = 0;
+					}	
+				}
+				if (lst < i && greater()) {
+					if (--vis[f[sa[lst]]] == 0) {
+						cnt--;
+					}
+//					printf("vis[%d] = %d\n", f[sa[lst]], vis[f[sa[lst]]]);
+					if (q[qhead][POS] == lst) {
+						pop();
+					}
+					lst++;
+				} else {
+					break;
+				}
+			}
+//			printf("af\n");
+//			for (int j = qhead; j < qtail; j++) {
+//				printf("q %d val = %d\n", q[j][POS], q[j][VAL]);
+//			} 	
+//			printf("now_len = %d, mx_len = %d, now_mx = %d, cnt = %d, lst = %d\n",
+//					 now_len, mx_len, now_mx, cnt, lst);
+			if (now_len >= mx_len && now_len > now_mx && cnt >= (n + 1) >> 1) {
+				now_mx = now_len;
+				mx_len = now_len;
+				add_ans(sa[i], sa[i] + mx_len - 1);
+			}			
+		}
+//		for (int j = qhead; j < qtail; j++) {
+//			printf("q %d val = %d\n", q[j][POS], q[j][VAL]);
+//		} 		
+	}
+	int getLen(int src) {
+		return len[f[src]] - (src - beg[f[src]]);
 	}
 	void printAns() {
 		int i, j, k;
@@ -289,16 +284,8 @@ struct _Main {
 			str[tot_len++] = -INF + (i != n);
 		}
 		tree.build(str, tot_len);
-		/*for (i = 0; i < tot_len; i++) {
-			for (j = sa[i]; j < tot_len; j++) {
-				printf("%d ", str[j]);
-			}
-			printf("\n%d\n", height[i]);
-		}*/
-		
 		getAns();
-		printAns();
-		
+		printAns();		
 	}
 
 
