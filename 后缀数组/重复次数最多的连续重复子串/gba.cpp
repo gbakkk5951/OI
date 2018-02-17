@@ -207,12 +207,10 @@ struct _Main {
 				ans_cnt = step;
 				ans_rank = INF;
 			}
-//			printf("L = %d, i = %d, l = %d, r = %d\n", len, i, l, r);
 			if (step == ans_cnt && (rank = OI::rank.query(i - l, i - l + (l + r) % len)) < ans_rank) {
 				ans_rank = rank;
 				ans_l = tree[ZHENG].sa[ans_rank];
 				ans_r = ans_l + step * len - 1;
-//				printf("rank = %d, i = %d, L = %d, [%d, %d]\n", rank, i, len, ans_l, ans_r);
 			}
 		}
 	}
@@ -242,14 +240,6 @@ struct _Main {
 				tree[i].build(str[i], tot_len);
 				h[i].init(tree[i].h, tot_len);
 			}
-			/*
-			for (i = 0; i < tot_len; i++) {
-				for (j = tree[ZHENG].sa[i]; j < tot_len; j++) {
-					printf("%d ", str[ZHENG][j]);
-				}
-				printf("\n%d\n", tree[ZHENG].h[i]);
-			}
-			*/
 			rank.init(tree[0].rank, tot_len);
 			for (i = 0, ans_rank = INF, ans_cnt = 1; i < n; i++) {
 				if (tree[ZHENG].rank[i] < ans_rank) {
@@ -261,7 +251,6 @@ struct _Main {
 			for (i = 1; i <= n >> 1; i++) {
 				getAns(i);
 			} 
-//			printf("[%d, %d] ", ans_l, ans_r);
 			for (i = ans_l; i<= ans_r; i++) {
 				putchar(str[ZHENG][i]);
 			}
