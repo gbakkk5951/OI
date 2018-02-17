@@ -148,10 +148,10 @@ int ans;
 int n;
 int str[MAXN];
 int tot_len;
-int beg[110];
+int beg[210];
 int f[MAXN];
 int bl[MAXN];
-int end[110];
+int end[210];
 int readStr(int *str) {
 	int idx = 0, t;
 	while (!isalpha(t = getchar()));
@@ -240,7 +240,8 @@ void getAns() {
 	for (i = 2 * n; i < tot_len; i++) {
 		push(i - 1, h[i]);
 		push(i, getLen(sa[i]));
-		for (j = sa[i]; j < tot_len; j++) {
+		/*
+        for (j = sa[i]; j < tot_len; j++) {
 			printf("%d ", str[j]);
 		}
 		
@@ -250,7 +251,7 @@ void getAns() {
 			printf("[%d] %d ; ", q[qhead][POS], q[qhead][VAL]);
 		}
 		printf("\n");
-		
+		*/
 		if (++vis[bl[sa[i]]] == 1) {
 			cnt++;
 		}
@@ -267,13 +268,13 @@ void getAns() {
 				break;
 			}
 		}
-		
+		/*
 		printf("af\n");
 		for (j = qhead; j < qtail; j++) {
 			printf("[%d] %d ; ", q[qhead][POS], q[qhead][VAL]);
 		}
 		printf("\n");
-		
+		*/
 		if (cnt == n) {
 			ans = max(ans, now_len);
 		}

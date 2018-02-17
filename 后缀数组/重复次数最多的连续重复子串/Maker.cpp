@@ -1,13 +1,22 @@
 using namespace std;
-#include<bits/stdc++.h>
+#include<cstdio>
+#include<cstdlib>
+#include<cstring>
+#include<ctime>
+#include<string>
+#include<sstream>
+#include<iostream>
+#include<algorithm>
+#include<fstream>
+
 typedef long long lld;
 struct _Main{
 //////////////
-string dataName = "recognize";
-string stdName = "std";
-string bruteName = "brute";
+string dataName = "KA";
+string stdName = "poj";
+string bruteName = "gba";
 bool make_data = true;
-bool run_ans = 1;
+bool run_ans = true;
 
 int beg = 0
 ,   end = 1
@@ -39,18 +48,27 @@ void make(){
 		outfile=dataName+to_string(I)+".in";
 		cerr<<"Make "<<outfile<<endl;
 		ofstream cout(outfile.c_str());
-		int N = 10;
-		int M = 20;
-		int n = rand() % N + 1;
-		cout << n << endl;
-		for (i = 1; i <= n; i++) {
-			int m = rand() % M + 1;
-			for (j = 1; j <= m; j++) {
-				cout << (char)((rand() & 1) + 'a');
-			}
-			cout << endl;
-		}
-
+        int n = 100000, Tn = 10;
+        static char buf[100000 + 5];
+        for (int T = 1; T <= Tn; T++) {
+	        for (i = 1; i <= n / 2; i++) {
+	            buf[i] = randchar(LOWER); 
+	            //buf[i] = 'a';
+	            /*while (buf[i] == buf[i - 1] || i - 2 > 0 && buf[i] == buf[i - 2] || i - 3 > 0 && buf[i] == buf[i - 3] || i - 4 > 0 && buf[i] == buf[i - 4]) {
+	                buf[i] = (buf[i] - 'a' + 1) % 26 + 'a';
+	            }*/
+	        }
+	        for (i = n / 2 + 1; i <= n; i++) {
+	            buf[i] = buf[i - n / 2];
+	        }
+	        for (int i = 1; i <= 1; i++) {
+	            for (int j = 1; j <= n; j++) {
+	                cout << buf[j];
+	            }
+	            cout << endl;
+	        }
+	    }
+        cout << '#';
 		EndFor1:
 		cout.close();
 	}
@@ -123,7 +141,7 @@ void run(){
 	int I;
     float a, b;
 	for(I=beg;I<end;I++){
-		cmd=  stdName + ".exe > "+dataName+to_string(I)+".out < "+dataName+to_string(I)+".in";
+		cmd= stdName + ".exe > "+dataName+to_string(I)+".out < "+dataName+to_string(I)+".in";
 		cerr<<"Run: "<<cmd<<endl;
 		a = clock();
 		system(cmd.c_str());
@@ -133,16 +151,6 @@ void run(){
 		}
 		
 		if (check_brute) {
-			cmd = dataName + to_string(I) + ".in";
-			ifstream cin(cmd.c_str());
-			int n = 0;
-			cin >> n;
-			if (n == 0) {
-				system("pause");
-			} else {
-				printf("correct\n");
-			}
-			/*
     		cmd= bruteName + ".exe > brute"+to_string(I)+".out < "+dataName+to_string(I)+".in";
     		cerr<<"Run: "<<cmd<<endl;
             a = clock();
@@ -155,7 +163,6 @@ void run(){
     		if(system(cmd.c_str()) && check_out_pause){
     			system("pause");
     		}
-			*/
 	    }
 	}
 	
@@ -362,15 +369,7 @@ const int
 }Maker;
 
 /*
-#include<cstdio>
-#include<cstdlib>
-#include<cstring>
-#include<ctime>
-#include<string>
-#include<sstream>
-#include<iostream>
-#include<algorithm>
-#include<fstream>
+//#include<bits/stdc++.h>
 */
 
 int main(){}

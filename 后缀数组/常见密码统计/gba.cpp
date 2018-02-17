@@ -205,28 +205,19 @@ struct _Main {
 				
 //				printf("vis[%d] = %d\n", f[sa[i]], vis[f[sa[i]]]);
 			}
-			if (now_mx > now_len) {
-				now_mx = 0;
-			}
 //			printf("bef\n");
 //			for (int j = qhead; j < qtail; j++) {
 //				printf("q %d val = %d\n", q[j][POS], q[j][VAL]);
 //			} 	
-			while (qhead < qtail) {
-				while(q[qhead][POS] < lst) {
+			while (1) {
+				while(qhead < qtail && q[qhead][POS] < lst) {
 					pop();
-					if (now_mx > now_len) {
-						now_mx = 0;
-					}	
 				}
 				if (lst < i && greater()) {
 					if (--vis[f[sa[lst]]] == 0) {
 						cnt--;
 					}
 //					printf("vis[%d] = %d\n", f[sa[lst]], vis[f[sa[lst]]]);
-					if (q[qhead][POS] == lst) {
-						pop();
-					}
 					lst++;
 				} else {
 					break;
