@@ -7,9 +7,7 @@ namespace OI {
 typedef long long lld;
 const int 
 	MAXN = 1000010,
-	ALPHA_SIZE = 26,
-	DST = 0,
-	NXT = 1
+	ALPHA_SIZE = 26
 ;
 
 
@@ -27,7 +25,7 @@ public:
 		nd->mx = mx;
 		nd->is_pre = is_pre;
 		if (org) {
-			memcpy(this->s, org->s, ALPHA_SIZE * sizeof(int));
+			memcpy(nd->s, org->s, ALPHA_SIZE * sizeof(Node *));
 		}
 		return nd;
 	}
@@ -35,16 +33,17 @@ public:
 		nd->mn = f->mx + 1;
 		nd->f = f;
 	}
-	
 	SAM() {
-		tail = root = node(mx, 0);
+		tail = root = node(0, 0);
 	}
-	void insert(char c) {
+	void insert(int c) {
 		Node *nd = node(tail->mx + 1, 1);
+		tail->s[c] = nd;
 		Node *f = tail->f;
 		tail = nd;
 		while (f && f->s[c] == 0) {
 			f->s[c] = nd;
+			f = f->f;
 		}
 		if (f == 0) {
 			ref(nd, root);
@@ -55,7 +54,7 @@ public:
 			ref(nd, s);
 			return;
 		}
-		Node *nf = node(s->mx + 1, 0, s);
+		Node *nf = node(f->mx + 1, 0, s);
 		ref(nf, s->f);
 		ref(s, nf);
 		ref(nd, nf);
@@ -69,25 +68,23 @@ public:
 struct _Main {
 	char buf[MAXN];
 	int cnt[MAXN];
-	int head[MAXN << 1];
-	int edge[MAXN << 1][2];
+	int f[MAXN << 1];
 	int in[MAXN << 1];
-	int cnt[MAXN];
-	int right[MAXN];
-	int eidx;
+	int right[MAXN << 1];
 	int len;
 	void getCnt() {
 		int i;
 		for (i = 1; i < sam.pidx; i++) {
-			add(i, sam.pool[i]->f - pool);
+			f[i] = sam.pool[i].f - sam.pool;
+			in[f[i]]++;
 		}
 		for (i = 1; i < sam.pidx; i++) {
 			if (in[i] == 0) {
 				topo(i);
 			}
 		}
-		for (i = 1; i < sam.idx; i++) {
-			cnt[pool[i].mx] = max(cnt[pool[i].mx], right[i]);
+		for (i = 1; i < sam.pidx; i++) {
+			cnt[sam.pool[i].mx] = max(cnt[sam.pool[i].mx], right[i]);
 		}
 		for (i = len; i >= 1; i--) {
 			cnt[i] = max(cnt[i], cnt[i + 1]);
@@ -95,21 +92,12 @@ struct _Main {
 	}
 	void topo(int nd) {
 		in[nd] = -1;
-		int i, t;
+		int i;
 		right[nd] += sam.pool[nd].is_pre;
-		for (i = head[nd]; i; i = edge[i][NXT]) {
-			right[t = edge[i][DST]] += right[nd];
-			if (--in[t] == 0) {
-				topo(t);
-			}
+		right[f[nd]] += right[nd];
+		if (--in[f[nd]] == 0) {
+			topo(f[nd]);
 		}
-	}
-	void add(int a, int b) {
-		eidx++;
-		edge[eidx][DST] = b;
-		edge[eidx][NXT] = head[a];
-		head[a] = eidx;
-		in[b]++;
 	}
 	_Main() {
 		int i, j, k;
@@ -120,7 +108,10 @@ struct _Main {
 		len = i;
 		getCnt();
 		for (i = 1; i <= len; i++) {
-			printf("%d\n", cnt[i]);
+			if (i > 1) {
+				puts("");
+			}
+			printf("%d", cnt[i]);
 		}
 	}
 
