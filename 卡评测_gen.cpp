@@ -9,7 +9,6 @@ int main() {
 	for (i = 0; i < M; i++) {
 		printf("class T%d{}b%d;\n", i, i);
 	}
-	
 	printf("template <");
 	for (int i = 0; i < N; i++) {
 		if (i) {
