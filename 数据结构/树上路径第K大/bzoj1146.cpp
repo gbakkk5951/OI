@@ -13,7 +13,7 @@ int n, mx;
 struct Node {
 	Node *s[2];
 	int sum;
-}pool[MXN * 18 * 2 + MXN * 18 * 18 * 2];
+}pool[20000000 + ((MXN * 18 * 2 + MXN * 18 * 18 * 2) >> 2)];
 int pidx;
 Node *null;
 Node *new_() {
@@ -23,7 +23,7 @@ Node *new_() {
 }
 class ChairTree {
 public:
-	Node *root[MXN];
+	Node *root[MXN << 1];
 	ChairTree() {
 		if (null == 0) {
 			null = new_();
@@ -67,7 +67,7 @@ public:
 			} else {
 				nr = mid;
 			}
-			if (nd->s[pos] == 0) {
+			if (nd->s[pos] == null) {
 				nd->s[pos] = new_();
 			}
 			nd = nd->s[pos];
@@ -78,15 +78,16 @@ public:
 class ArrayTree {
 public:
 	SegTree node[MXN * 2];
-	int lb(int a) {
+	inline int lb(int a) {
 		return a & (-a);
 	}
 	void change(int nd, int val, int add) {
 		for ( ; nd <= 2 * n; nd += lb(nd)) {
-			node[nd].change(val, add);
+			node[nd].insert(val, add);
 		}
 	}
 	void query(int nd, Node *arr[], int &idx) {
+//		printf("query(%d)\n", nd);
 		for ( ; nd; nd -= lb(nd)) {
 			arr[idx++] = node[nd].root;
 		}
@@ -97,9 +98,8 @@ public:
 struct _Main {
 	int sorted[160005];
 	int val[160005];
-	int aug[160005][3];
 	
-	int out[MXN], in[MXN], f[MXN][16], h[MXN];
+	int out[MXN], in[MXN], f[MXN][17], h[MXN];
 	int eidx;
 	int head[MXN];
 	int edge[MXN << 1][2];
@@ -136,15 +136,19 @@ struct _Main {
 		this->val[nd] = val;
 	}
 	void getrank(int &val) {
-		val = lower_bound(sorted + 1, sorted + mx + 1, val) - sorted;
+//		printf("rk[%d] = ", val);
+		val = mx - (lower_bound(sorted + 1, sorted + mx + 1, val) - sorted) + 1;
+//		printf("%d\n", val);
 	}
 	int getlca(int a, int b) {
+		
 		if (h[a] < h[b]) swap(a, b);
 		for (int I = 16; I >= 0; I--) {
 			if (h[a] - (1 << I) >= h[b]) {
 				a = f[a][I];
 			}
 		}
+		
 		if (a == b) return a;
 		for (int I = 16; I >= 0; I--) {
 			if (f[a][I] != f[b][I]) {
@@ -152,21 +156,26 @@ struct _Main {
 				b = f[b][I];
 			}
 		}
-		return a;
+		return f[a][0];
 	}
 	Node *node[80];
 	int xishu[80];
 	int query(int a, int b, int rk) {
 		int lca = getlca(a, b);
-		node[0] = org.root[in[a]]; xishu[0] = 1;
-		node[1] = org.root[in[b]]; xishu[1] = 1;
+		if (h[a] + h[b] - h[lca] - (h[lca] - 1) < rk) {
+			return -1;
+		}
+//		printf("lca %d %d = %d\n", a, b, lca);
+		node[0] = org.root[in[a]]; xishu[0] = +1;
+		node[1] = org.root[in[b]]; xishu[1] = +1;
 		node[2] = org.root[in[lca]]; xishu[2] = -1;
 		node[3] = org.root[in[lca] - 1]; xishu[3] = -1;
+//		printf("node = %d, %d, %d, %d\n", in[a], in[b], in[lca], in[lca] - 1);
 		int idx = 4, lst = 4;
 		cg.query(in[a], node, idx);
 		cg.query(in[b], node, idx);
 		for (int i = lst; i < idx; i++) {
-			xishu[i] = 1;
+			xishu[i] = +1;
 		}
 		lst = idx;
 		cg.query(in[lca], node, idx);
@@ -177,15 +186,13 @@ struct _Main {
 		int nl = 1, nr = mx, mid, pos, sum;
 		while (nl < nr) {
 			sum = 0;
+			mid = nl + nr >> 1;
 			for (int i = 0; i < idx; i++) {
-				while (node[i] == null && i < idx) {
-					swap(node[idx - 1], node[i]);
-					swap(xishu[idx - 1], xishu[i]);
-					idx--;
-				}
+//				if (i < 4) printf("sum += %d\n", node[i]->s[0]->sum * xishu[i]);
 				sum += node[i]->s[0]->sum * xishu[i];
 			}
-			if (pos = sum < pos) {
+//			printf("[%d, %d] sum = %d\n", nl, nr, sum);
+			if (pos = sum < rk) {
 				rk -= sum;
 				nl = mid + 1;
 			} else {
@@ -195,10 +202,10 @@ struct _Main {
 				node[i] = node[i]->s[pos];
 			}
 		}
-		return sorted[nl];
+//		printf("nl = %d\n", nl);
+		return nl;
 	}
 	_Main() {
-		int i, j, k;
 		int Qn;
 		int a, b;
 		read(n); read(Qn);
@@ -208,6 +215,7 @@ struct _Main {
 		mx = n;
 		memcpy(sorted + 1, val + 1, n * sizeof(int));
 		for (int i = 1; i <= n - 1; i++) {
+//			add(i, i + 1); add(i + 1, i);
 			read(a); read(b);
 			add(a, b); add(b, a);
 		}
@@ -224,17 +232,31 @@ struct _Main {
 		for (int i = 1; i <= n; i++) {
 			getrank(val[i]);
 		}
-		dfs(1, 0, *new int);
+		dfs(1, 0, *new int = 0);
 		for (int i = 1; i <= 2 * n; i++) {
-			org.insert(i, i - 1, abs(dfn[i]), dfn[i] > 0 ? 1 : -1);
+			org.insert(i, i - 1, val[abs(dfn[i])], dfn[i] > 0 ? 1 : -1);
 		}
+		
 		for (int Q = 1; Q <= Qn; Q++) {
 			if (aug[Q][0] == 0) {
 				getrank(aug[Q][2]);
 				change(aug[Q][1], aug[Q][2]);
 			} else {
-				printf("%d\n", query(aug[Q][1], aug[Q][2], aug[Q][0]));
+				int ans = query(aug[Q][1], aug[Q][2], aug[Q][0]);
+				if (ans > 0) {
+					printf("%d\n", sorted[mx - ans + 1]);
+				} else {
+					printf("%s\n", FAIL);
+				}
 			}
+		}
+		FILE *F = fopen("mxmem.out", "r");
+		int tmp;
+		fscanf(F, "%d", &tmp);
+		if (pidx > tmp) {
+			FILE *F = fopen("mxmem.out", "w");
+			fprintf(F, "%d", pidx);
+			fclose(F);
 		}
 	}
 template <typename Type>	
@@ -249,3 +271,9 @@ template <typename Type>
 	}
 }bzoj1146;
 }
+//倍增数组大小一定要和循环枚举的初始指数对应 
+//可以查一下每个参数是否用到了 
+//用自己初始化自己不会warning 
+//类内部的数组也要检查大小 
+//K大还是K小 
+//递增递减变化后要坐标旋转 

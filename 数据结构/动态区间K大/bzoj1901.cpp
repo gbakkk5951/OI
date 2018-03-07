@@ -136,7 +136,7 @@ template <typename Type>
 			mid = nl + nr >> 1;
 			sum = 0;
 			for (int i = 0; i < idx; i++) {
-				if (node[i] == null) {
+				if (i < idx && node[i] == null) {
 					swap(node[i], node[idx - 1]);
 					swap(xishu[i], xishu[idx - 1]);
 					idx--;
