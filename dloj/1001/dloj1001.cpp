@@ -14,7 +14,7 @@ struct ZKW {
 	int base;
 	int node[270000];
 	void build() {
-		for (base = 1; base - 2 < n; base <<= 1);
+		for (base = 4; base - 2 < n; base <<= 1);
 	}
 	void change(int s, int t) {
 		if (s > t) return; 
@@ -23,7 +23,7 @@ struct ZKW {
 			if ( t & 1) node[t ^ 1] = 1;
 		}
 	}
-	int ask(int nd) {
+	int query(int nd) {
 		int ret = 0;
 		for (nd += base; nd && !ret; nd >>= 1) {
 			ret |= node[nd];
@@ -45,7 +45,7 @@ struct ChairTree {
 	Node *root[MXN];
 	ChairTree() {
 		null = new_();
-		null->s[0] = null->s[1] = 0;
+		null->s[0] = null->s[1] = null; //null不是0 
 		root[0] = null;
 	}
 	void insert(int ia, int ib, int val) {
@@ -92,8 +92,8 @@ struct ChairTree {
 }ctree;
 
 struct _Main {
-	int h[MXN], kl[MXN], kr[MXN], f[MXN][17], arr[MXN];
-	int head[MXN], edge[MXN << 1][2], idx;
+	int h[MXN], kl[MXN], kr[MXN], f[MXN][17], arr[MXN], id[MXN];
+	int head[MXN], edge[MXN << 1][2], eidx;
 	void inline add(int a, int b) {
 		eidx++;
 		edge[eidx][DST] = b;
@@ -103,7 +103,7 @@ struct _Main {
 	void dfs(int nd, int fa, int &idx) {
 		h[nd] = h[fa] + 1;
 		f[nd][0] = fa;
-		arr[++idx] = nd;
+		arr[id[nd] = ++idx] = nd;
 		kl[nd] = idx + 1;
 		int t;
 		for (int I = 1; 1 << I < h[nd]; I++) {
@@ -133,8 +133,10 @@ struct _Main {
 		return f[a][0];
 	}
 	_Main() {
+//		freopen ("data0.in", "r", stdin);
+//		freopen ("data0.out", "w", stdout);
 		int a, b, Qn, op, lca;
-		read(n);
+		read(n); read(Qn);
 		for (int i = 1; i <= n - 1; i++) {
 			read(a); read(b);
 			add(a, b); add(b, a);
@@ -148,28 +150,29 @@ struct _Main {
 			read(op);
 			if (op == 1) {//sort
 				read(a);
-				stree.change(kl[a], kr[a]);
+				stree.change(kl[a] - 1, kr[a]);
 			} else if (op == 2) {//lca
 				read(a); read(b);
+				if (h[a] < h[b]) swap(a, b);
 				lca = getlca(a, b);
-				if (stree.query(lca)) {
+				if (lca != b && stree.query(id[lca])) { 
 					lca = min(a, b);
-				} 
+				} else if(lca == b && b != 1 && stree.query(id[f[b][0]])) { //逻辑结构错误， 第二个的lca == b不能少 
+					lca = min(a, b);
+				}
 				printf("%d\n", lca);
 			} else {//geth
 				read(a);
-				if (stree.query(a) == 0) {
+				if (a == 1 || stree.query(id[f[a][0]]) == 0) {
 					printf("%d\n", h[a]);
+					continue;//忘了continue 
 				}
 				int top = a;
 				for (int I = 16; I >= 0; I--) {
-					if (1 << I < h[top]) {
-						if (stree.query(f[top][I])) {
-							top = f[top][I];
-						}
+					if (1 << I < h[top] && stree.query(id[f[top][I]])) {
+						top = f[top][I];
 					}
 				}
-				top = f[top][0];
 				printf("%d\n", h[top] + ctree.query(kl[top] - 1, kr[top], a));
 			}
 		}
