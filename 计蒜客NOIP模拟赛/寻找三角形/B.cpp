@@ -12,10 +12,12 @@ typedef double lf;
 const int MXN = 100010;
 const int DST = 0, NXT = 1;
 int n, m;
-
+int lrand(int l, int r) {
+	return rand() % (r - l + 1) + l;
+} 
 int id[MXN], mark[MXN];
 int deg[MXN], head[MXN];
-int edge[MXN << 1][2];
+int edge[MXN * 42][2];
 int eidx;
 void add(int a, int b) {
 	eidx++;
@@ -26,7 +28,7 @@ void add(int a, int b) {
 }
 int sq;
 
-bitset<MXN> bit[65], tmp;
+bitset<MXN> bit[7500], tmp;
 int bidx, ans;
 int vis[MXN];
 void getbit(int nd) {
@@ -78,9 +80,11 @@ struct _Main {
 	_Main() {
 		int arr[3], t, a, b;
 		read(n); read(m);
-		sq = ceil(pow((lf)n, 3.0 / 4.0));
+		sq = ceil(pow(m * 1.3e4, 1.0 / 3.0));
 		for (int i = 1; i <= m; i++) {
 			read(a); read(b);
+//			if (a <= 0 || a > n || b > n || b <= 0) return;
+//			a = lrand(1, n); b = lrand(1, n);
 			add(a, b); add(b, a);
 		}
 		for (int i = 1; i < n; i++) {
@@ -124,7 +128,8 @@ struct _Main {
 		arr[2] = ans;
 		sort(arr, arr + 3);
 		for (int i = 0; i <= 2; i++) {
-			printf("%d ", arr[i]);
+			printf("%d", arr[i]);
+			if (i != 2) printf(" ");
 		}
 	}
 template <typename Type>
