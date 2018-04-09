@@ -13,7 +13,7 @@ bool vis[110];
 
 int bel[N],ans[N],cnt=0;
 
-bool cmp(int *r,int a,int b,int l){return r[a]==r[b]&&r[a+l]==r[b+l];}
+bool cmp(int *r,int a,int b,int l){;return r[a]==r[b]&&r[a+l]==r[b+l];}
 
 void hou(){
 	int i,j,p,k=0,*x=xx,*y=yy;
@@ -48,14 +48,15 @@ void hou(){
 
 bool check(int len){
 	int i,j,num=0,st=0;
-	memset(vis, 0, sizeof(vis));
+	
 	for(i=0;i<n;i++){
 		if(h[i]<len){
 			if(num>=k) return true;
 			num=0;
 			
-			for(j=st;j<=i;j++) vis[bel[sa[j]]]=false;
-			if(bel[sa[i]]&&vis[bel[sa[i]]]==false) vis[bel[sa[i]]]=true,num++;
+			for (j=st;j<=i;j++) vis[bel[sa[j]]] = false;
+			if (bel[sa[i]]&&vis[bel[sa[i]]] == false) vis[bel[sa[i]]]=true,num++;
+			
 			st=i;
 		}
 		else{
@@ -67,8 +68,9 @@ bool check(int len){
 }
 
 void print(int len){
+	
 	int i,j,num=0,st=0;
-	memset(vis, 0, sizeof(vis));
+	
 	for(i=0;i<n;i++){
 		if(h[i]<len){
 			if(num>=k) ans[++cnt]=sa[i-1];
@@ -107,13 +109,15 @@ int main()
 	
 	n++;hou();
 	
-	
 	l=0,r=n;
 	while(l<r){
 		len=(l+r)/2;
+		
 		if(check(len)==true) l=len+1,tans=len;
 		else r=len;
+		
 	}
+	printf("tans = %d\n",tans);
 	if(tans==0){
 		printf("?\n");
 		return 0;
@@ -127,3 +131,4 @@ int main()
 	}
 	
 }
+

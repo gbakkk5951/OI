@@ -5,7 +5,7 @@ struct _Main{
 //////////////
 string dataName = "data";
 string stdName = "gba";
-string bruteName = "wbx";
+string bruteName = "a";
 bool make_data = true;
 bool run_ans = true;
 

@@ -182,7 +182,7 @@ struct _Main {
 	}
 	char greater() {
 		int t = f[sa[lst]];
-		return cnt - (vis[t] == 1) >= (n + 1) / 2;
+		return cnt - (vis[t] == 1) >= (n >> 1) + 1;
 	}
 	void pop() {
 		qhead++;
@@ -229,7 +229,7 @@ struct _Main {
 //			} 	
 //			printf("now_len = %d, mx_len = %d, now_mx = %d, cnt = %d, lst = %d\n",
 //					 now_len, mx_len, now_mx, cnt, lst);
-			if (now_len >= mx_len && now_len > now_mx && cnt >= (n + 1) >> 1) {
+			if (now_len >= mx_len && now_len > now_mx && cnt >= (n >> 1) + 1) {
 				now_mx = now_len;
 				mx_len = now_len;
 				add_ans(sa[i], sa[i] + mx_len - 1);
