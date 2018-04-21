@@ -7,11 +7,11 @@ int main() {}
 #include <algorithm>
 namespace OI {
 const int ADD = 1, QUERY = 2;
-void ArrayTree {
+struct ArrayTree {
 	int node[100010];
 	int n;
 	int query(int nd) {
-		int ret = 1;
+		int ret = 0; //神TM = 1 
 		for (; nd; nd -= nd & (-nd)) {
 			ret += node[nd];
 		}
@@ -25,7 +25,7 @@ void ArrayTree {
 	void clear() {
 		memset(node + 1, 0, n * sizeof(int));
 	}
-}	
+}tree;
 struct Ques {
 	int id, xishu, x, y, z, tp;
 	bool operator < (const Ques &b) const {
@@ -41,7 +41,6 @@ struct Ques {
 		return tp < b.tp;
 	}
 };
-
 int ans[50005];
 Ques tmp[400010];
 Ques subarr[400010];
@@ -112,10 +111,10 @@ void cdq(int l, int r) {
 	}
 	for (int i = mid + 1; i <= r; i++) {
 		if (arr[i].tp == QUERY) {
-			subarr[idx]++ = arr[i];
+			subarr[idx++] = arr[i];
 			++q2;
 		} else {
-			++q1;
+			++a2;
 		}
 	}
 	if (a1 && q2) {
@@ -136,7 +135,7 @@ struct _Main {
 	void push(int id, int xishu, int x, int y, int z, int tp) {
 		if (x && y && z) {
 			srt[++sidx] = z;
-			arr[++qidx] = (Ques) {id, xishu, x, y, z, tp};
+			arr[++qidx] = Ques {id, xishu, x, y, z, tp};
 		}
 	}
 	_Main() {
@@ -145,11 +144,11 @@ struct _Main {
 		read(Tn);
 		for (int T = 1; T <= Tn; T++) {
 			read(Qn);
-			for (Q = 1; Q <= Qn; Q++) {
+			for (int Q = 1; Q <= Qn; Q++) {
 				read(op);
 				if (op == ADD) {
 					read(x1); read(y1); read(z1);
-					push(0, 0, x1, y1, z1, ADD);
+					push(Q, 0, x1, y1, z1, ADD);
 				} else
 				if (op == QUERY) {
 					++ansidx;
@@ -167,15 +166,15 @@ struct _Main {
 					push(ansidx, -1, x1 - 1, y1 - 1, z1 - 1, QUERY);
 				}
 			}
-			
 			sort(srt + 1, srt + sidx + 1);
-			sidx = unique(srt + 1, srt + sidx + 1) - srt;
+			sidx = unique(srt + 1, srt + sidx + 1) - srt - 1; // - 1; uniq return值是开区间 
+			tree.n = sidx;
 			for (int i = 1; i <= qidx; i++) {
 				arr[i].z = lower_bound(srt + 1, srt + sidx + 1, arr[i].z) - srt;
 			}
 			cdq(1, qidx);
 			for (int i = 1; i <= ansidx; i++) {
-				printf("%d", ans[i]);
+				printf("%d\n", ans[i]);
 			}
 			if (T != Tn) {
 				memset(ans + 1, 0, ansidx * sizeof(int));
