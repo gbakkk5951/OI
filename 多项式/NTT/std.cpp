@@ -92,6 +92,10 @@ struct _Main {
 				printf("%lld ", a[i]);
 			}
 			printf("\n");
+			for (int i = 0; i < pow; i++) {
+				a[i] = a[i] * a[i] % MOD;
+			}
+			
 			NTT(a, pow, -1);
 			printf("FFT0: ");
 			for (int i = 0; i < pow; i++) {
