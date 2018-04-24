@@ -76,7 +76,7 @@ struct _Main {
 		memcpy(s, tmp, (k + 1) * sizeof(lld));
 		tmp[0] = 0;
 		for (lld i = 1; i <= k; i++) {
-			tmp[i] = fastpower(i, k);
+			tmp[i] = tmp[i] * fastpower(i, k) % MOD; //ÍüÁË³Ëtmp[i] 
 		}
 		for (lld i = 1; i <= k; i++) {
 			s[i] = (i & 1) ? -s[i] : s[i];
@@ -93,14 +93,14 @@ struct _Main {
 	lld calc() {
 		lld ret = 0, mul = 1;
 		for (int i = 1; i <= k; i++) {
-			mul = mul * (n - i + 1) % MOD;
-			ret = (ret + s[i] * mul % MOD * fastpower(2, n - i)) % MOD;
+			mul = mul * ((n - 1) - i + 1) % MOD;
+			ret = (ret + s[i] * mul % MOD * fastpower(2, (n - 1) - i)) % MOD;
 		}
 		return ret;
 	}
 	_Main() {
 		read(n); read(k);
-		ans = n * fastpower(2, (n - 1) * (n - 2) >> 1) % MOD;
+		ans = n * fastpower(2, ((n - 1) * (n - 2) >> 1) % PHI) % MOD;
 		getstirling();
 		ans = ans * calc() % MOD;
 		ans += ans < 0 ? MOD : 0;
