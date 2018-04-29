@@ -108,6 +108,8 @@ struct _Main {
 	int op[MXQ], id[MXQ];
 	int del[MXN];
 	_Main() {
+		freopen("defense1.in", "r", stdin);
+		freopen("defense1.ans", "w", stdout);
 		int n, m, a, b, Qn;
 		read(m); read(a); read(b);
 		read(n);
