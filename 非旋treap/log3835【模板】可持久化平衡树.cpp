@@ -48,28 +48,103 @@ struct ForeverTreap {
 		null->size = 0;
 	}
 	void split(int id, Node *nd, int rank, Node *&l ,Node *&r) {
-		if (nd->size == rank) {
-			l = nd; r = null;
+		Node **ll = &l, **lr = &r;
+		while (nd->size != rank) {
+			nd = nd->id == id ? nd : new_(id, nd);
+			if (nd->s[0]->size >= rank) {
+				nd->size -= rank;
+				nd = nd->s[0];
+				*lr = nd;
+				lr = *nd->s[0];
+			} else {
+				nd->size = rank;
+				rank -= nd->s[0]->size + 1;
+				nd = nd->s[1];
+				*ll = nd;
+				ll = nd->s[1];
+			}
 		}
-		nd = nd->id == id ? nd : new_(id, nd);
-		if (nd->s[0]->size >= rank) {
-			split(id, nd->s[0], rank, l, nd->s[0]);
-			nd->update();
-		} else {
-			split(id, nd->s[1], rank - nd->s[0]->size - 1; nd->s[1], r);
-			nd->update();
-		}
+		ll = nd; lr = null;
 	}
 	Node *merge(int id, Node *l, Node *r) {
-		if (l->rand > r->rand) {
-			l = l->id == id ? l : new_(id, l);
-			l->s[1] = l->s[1] != null ? merge(l->s[1], r) : r; 
-			return l;
-		} else {
-			r = r->id == id ? r : new_(id, r);
-			r->s[0] = r->s[0] != null ? merge(l, r->s[0]) : r;
-			return r;
+		Node *ret;
+		Node **lst = &ret;
+		while (1) {
+			if (l->rand > r->rand) {
+				l = l->id == id ? l : new_(id, l);
+				l->size += r->size;
+				*lst = l;
+				if (l->s[1] == null) {
+					l->s[1] = r;
+					break;
+				} else {
+					*lst = &l->s[1];
+					l = l->s[1];
+				}
+			} else {
+				r = r->id == id ? r : new_(id, r);
+				r->size += l->size;
+				*lst = r;
+				if (r->s[0] == null) {
+					r->s[0] = l;
+					break;
+				} else {
+					*lst = &r->s[0];
+					r = r->s[0];
+				}
+			}
 		}
+		return ret;
+	}
+	int getrank(int id, int v) { //有-INF节点，不用+1
+		Node *nd = root[id];
+		int ret = 0;
+		while (nd != null) {
+			if (nd->v < v) {
+				ret += nd->s[0]->size + 1;
+				nd = nd->s[1];
+			} else {
+				nd = nd->s[0];
+			}
+		}
+		return ret;
+	}
+	int getnum(int id, int rank) {
+		Node *nd = root[id];
+		while (1) {
+			if (nd->s[0]->size >= rank) {
+				nd = nd->s[0];
+			} else
+			if (nd->s[0]->size + 1 == rank) {
+				break;
+			} else {
+				rank -= nd->s[0]->size + 1;
+				nd = nd->s[1];
+			}
+		}
+		return nd->v;
+	}
+	void insert(int id, int v) {
+		Node *l, *r, *nd = new_(id, v);
+		int pos = getrank(id, v);
+		split(root[id], pos - 1, l, r);
+		nd = l == null ? l : merge(id, l, nd);
+		root[id] = r == null ? nd : merge(id, nd, r);
+	}
+	void erase(int id, int v) {
+		Node *l, *r, *nd;
+		int pos = getrank(id, v);
+		if (getnum(id, pos) == v) {
+			split(id, root[id], pos - 1, l, r);
+			split(id, r, 1, nd, r);
+			root[id] = l == null ? r : (r == null ? l : merge(id, l, r));
+		}
+	}
+	inline int getpre(int id, int v) {
+		getnum(id, getrank(id, v) - 1);
+	}
+	inline int getnxt(int id, int v) {
+		getnum(id, getrank(id, v + 1));
 	}
 }tree;
 

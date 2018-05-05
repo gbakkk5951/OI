@@ -7,7 +7,7 @@ int main() {}
 #include <algorithm>
 namespace OI {
 typedef long long lld;
-const int MXN = 1e5 + 10;
+const int MXN = 5e5 + 10;
 struct Node {
 	Node *s[2];
 	int size, v, rand;
@@ -99,20 +99,19 @@ struct Treap {
 		return ret + 1;
 	}
 	
-	int getnum(int rank) {
+	Node *find(int v) {
 		Node *nd = root;
-		while (1) {
-			if (nd->s[0]->size >= rank) {
-				nd = nd->s[0];
-			} else
-			if (nd->s[0]->size + 1 == rank) {
+		while (nd != null) {
+			if (nd->v == v) {
 				break;
+			} else
+			if (nd->v > v) {
+				nd = nd->s[0];
 			} else {
-				rank -= nd->s[0]->size + 1;
 				nd = nd->s[1];
 			}
 		}
-		return nd->v;
+		return nd;
 	}
 	
 	void insert(int v) {
@@ -122,49 +121,22 @@ struct Treap {
 		nd = l != null ? merge(l, nd) : nd;
 		root = r != null ? merge(nd, r) : nd;
 	}
-	
-	void erase(int v) {
-		Node *l, *nd, *r;
-		int rank = getrank(v);
-		split(root, rank - 1, l, r);
-		split(r, 1, nd, r);
-		root = r != null ? (l != null ? merge(l, r) : r) : l;
-	}
-	
-	int inline getpre(int v) {
-		return getnum(getrank(v) - 1);
-	}
-	
-	int inline getnxt(int v) {
-		return getnum(getrank(v + 1));
-	}
+
 	
 }tree;
 struct _Main {
 	_Main() {
-		int op, x;
-		int Qn;
-		read(Qn);
+		int Qn, n;
+		int x;
+		srand(168796531 ^ (unsigned long long) new char);
+		read(n); read(Qn);
+		for (int i = 1; i <= n; i++) {
+			read(x);
+			tree.insert(x);
+		}
 		for (int Q = 1; Q <= Qn; Q++) {
-			read(op); read(x);
-			if (op == 1) {
-				tree.insert(x);
-			} else
-			if (op == 2) {
-				tree.erase(x);
-			} else
-			if (op == 3) {
-				printf("%d\n", tree.getrank(x));
-			} else
-			if (op == 4) {
-				printf("%d\n", tree.getnum(x));
-			} else
-			if (op == 5) {
-				printf("%d\n", tree.getpre(x));
-			} else
-			if (op == 6) {
-				printf("%d\n", tree.getnxt(x));
-			}
+			read(x);
+			printf("%d ", tree.find(x) != null);
 		}
 	}
 template <typename Type>
