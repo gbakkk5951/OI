@@ -1,5 +1,5 @@
 using namespace std;
-int main() {}
+int main() {return 0;}
 #include <cstdio>
 #include <cctype>
 #include <cstring>
@@ -7,7 +7,7 @@ int main() {}
 #include <algorithm>
 namespace OI {
 const int INF = 2147483647;
-const int MXN = 2e6;
+const int MXN = 100;
 struct Node {
 	Node *s[2];
 	int id, v, rand, size;
@@ -16,7 +16,8 @@ struct Node {
 	}
 }pool[MXN], *null;
 
-Node *now = pool, *end = pool + MXN;
+Node *now = pool;
+Node *end = now + MXN;
 
 Node *new_(int id, int v) {
 	if (now == end) {
@@ -42,10 +43,12 @@ Node *new_(int id, Node *org) {
 }
 
 struct ForeverTreap {
+	Node *root[100010];
 	ForeverTreap() {
 		null = new_(-1, 0);
 		null->s[0] = null->s[1] = null;
 		null->size = 0;
+		root[0] = null;
 	}
 	void split(int id, Node *nd, int rank, Node *&l ,Node *&r) {
 		Node **ll = &l, **lr = &r;
@@ -55,16 +58,16 @@ struct ForeverTreap {
 				nd->size -= rank;
 				nd = nd->s[0];
 				*lr = nd;
-				lr = *nd->s[0];
+				lr = &nd->s[0];
 			} else {
 				nd->size = rank;
 				rank -= nd->s[0]->size + 1;
 				nd = nd->s[1];
 				*ll = nd;
-				ll = nd->s[1];
+				ll = &nd->s[1];
 			}
 		}
-		ll = nd; lr = null;
+		*ll = nd; *lr = null;
 	}
 	Node *merge(int id, Node *l, Node *r) {
 		Node *ret;
@@ -78,7 +81,7 @@ struct ForeverTreap {
 					l->s[1] = r;
 					break;
 				} else {
-					*lst = &l->s[1];
+					lst = &l->s[1];
 					l = l->s[1];
 				}
 			} else {
@@ -89,14 +92,14 @@ struct ForeverTreap {
 					r->s[0] = l;
 					break;
 				} else {
-					*lst = &r->s[0];
+					lst = &r->s[0];
 					r = r->s[0];
 				}
 			}
 		}
 		return ret;
 	}
-	int getrank(int id, int v) { //ÓĞ-INF½Úµã£¬²»ÓÃ+1
+	int getrank(int id, int v) { //¿¿¿¿-INF ¿¿ +1
 		Node *nd = root[id];
 		int ret = 0;
 		while (nd != null) {
@@ -127,8 +130,8 @@ struct ForeverTreap {
 	void insert(int id, int v) {
 		Node *l, *r, *nd = new_(id, v);
 		int pos = getrank(id, v);
-		split(root[id], pos - 1, l, r);
-		nd = l == null ? l : merge(id, l, nd);
+		split(id, root[id], pos - 1, l, r);
+		nd = l == null ? nd : merge(id, l, nd); //l == null¿¿¿¿¿nd ¿¿¿ l
 		root[id] = r == null ? nd : merge(id, nd, r);
 	}
 	void erase(int id, int v) {
@@ -137,24 +140,25 @@ struct ForeverTreap {
 		if (getnum(id, pos) == v) {
 			split(id, root[id], pos - 1, l, r);
 			split(id, r, 1, nd, r);
-			root[id] = l == null ? r : (r == null ? l : merge(id, l, r));
+			root[id] = merge(id, l, r); //¿¿¿¿¿¿¿, ¿¿¿INF
 		}
 	}
 	inline int getpre(int id, int v) {
-		getnum(id, getrank(id, v) - 1);
+		return getnum(id, getrank(id, v) - 1);
 	}
 	inline int getnxt(int id, int v) {
-		getnum(id, getrank(id, v + 1));
+		return getnum(id, getrank(id, v + 1));
 	}
 }tree;
 
 struct _Main {
 	_Main() {
-		tree.insert(0, 0, INF);
-		tree.insert(0, 0, -INF);
 		int Qn, src, op, v;
+		tree.insert(0, INF);
+		tree.insert(0, -INF);
 		read(Qn);
-		for (Q = 1; Q <= Qn; Q++) {
+		printf("Qn = %d\n", Qn);
+		for (int Q = 1; Q <= Qn; Q++) {
 			read(src); read(op); read(v);
 			tree.root[Q] = tree.root[src];
 			switch (op) {
