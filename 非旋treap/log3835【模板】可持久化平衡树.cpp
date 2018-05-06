@@ -7,13 +7,10 @@ int main() {return 0;}
 #include <algorithm>
 namespace OI {
 const int INF = 2147483647;
-const int MXN = 100;
+const int MXN = 1e7;
 struct Node {
 	Node *s[2];
 	int id, v, rand, size;
-	inline void update() {
-		size = s[0]->size + s[1]->size + 1;
-	}
 }pool[MXN], *null;
 
 Node *now = pool;
@@ -43,12 +40,12 @@ Node *new_(int id, Node *org) {
 }
 
 struct ForeverTreap {
-	Node *root[100010];
+	Node *root[500010];
 	ForeverTreap() {
 		null = new_(-1, 0);
 		null->s[0] = null->s[1] = null;
 		null->size = 0;
-		root[0] = null;
+		root[0] = merge(0, new_(0, -INF), new_(0, INF));
 	}
 	void split(int id, Node *nd, int rank, Node *&l ,Node *&r) {
 		Node **ll = &l, **lr = &r;
@@ -56,15 +53,15 @@ struct ForeverTreap {
 			nd = nd->id == id ? nd : new_(id, nd);
 			if (nd->s[0]->size >= rank) {
 				nd->size -= rank;
-				nd = nd->s[0];
 				*lr = nd;
-				lr = &nd->s[0];
+				lr = &nd->s[0];//ÕâÁ½¾ä·ÅÔÚÁËÏÂÒ»¾äÏÂÃæ 
+				nd = nd->s[0];
 			} else {
 				nd->size = rank;
 				rank -= nd->s[0]->size + 1;
-				nd = nd->s[1];
 				*ll = nd;
-				ll = &nd->s[1];
+				ll = &nd->s[1];//ÕâÁ½¾ä·ÅÔÚÁËÏÂÒ»¾äÏÂÃæ 
+				nd = nd->s[1];
 			}
 		}
 		*ll = nd; *lr = null;
@@ -99,7 +96,7 @@ struct ForeverTreap {
 		}
 		return ret;
 	}
-	int getrank(int id, int v) { //¿¿¿¿-INF ¿¿ +1
+	int getrank(int id, int v) { //
 		Node *nd = root[id];
 		int ret = 0;
 		while (nd != null) {
@@ -110,7 +107,7 @@ struct ForeverTreap {
 				nd = nd->s[0];
 			}
 		}
-		return ret;
+		return ret + 1;
 	}
 	int getnum(int id, int rank) {
 		Node *nd = root[id];
@@ -128,18 +125,16 @@ struct ForeverTreap {
 		return nd->v;
 	}
 	void insert(int id, int v) {
-		Node *l, *r, *nd = new_(id, v);
-		int pos = getrank(id, v);
-		split(id, root[id], pos - 1, l, r);
-		nd = l == null ? nd : merge(id, l, nd); //l == null¿¿¿¿¿nd ¿¿¿ l
-		root[id] = r == null ? nd : merge(id, nd, r);
+		Node *l, *r;
+		split(id, root[id], getrank(id, v) - 1, l, r);
+		root[id] = merge(id, merge(id, l, new_(id, v)), r);
 	}
 	void erase(int id, int v) {
 		Node *l, *r, *nd;
 		int pos = getrank(id, v);
 		if (getnum(id, pos) == v) {
 			split(id, root[id], pos - 1, l, r);
-			split(id, r, 1, nd, r);
+			split(id, r, 1, nd, r);  //rÖÐÃ»ÓÐ-INF 
 			root[id] = merge(id, l, r); //¿¿¿¿¿¿¿, ¿¿¿INF
 		}
 	}
@@ -153,11 +148,9 @@ struct ForeverTreap {
 
 struct _Main {
 	_Main() {
+		srand(96157913287LLU ^ (unsigned long long) new char);
 		int Qn, src, op, v;
-		tree.insert(0, INF);
-		tree.insert(0, -INF);
 		read(Qn);
-		printf("Qn = %d\n", Qn);
 		for (int Q = 1; Q <= Qn; Q++) {
 			read(src); read(op); read(v);
 			tree.root[Q] = tree.root[src];
@@ -171,11 +164,11 @@ struct _Main {
 					break;
 				}
 				case 3: {
-					printf("%d\n", tree.getrank(Q, v));
+					printf("%d\n", tree.getrank(Q, v) - 1);
 					break;
 				}
 				case 4: {
-					printf("%d\n", tree.getnum(Q, v));
+					printf("%d\n", tree.getnum(Q, v + 1));
 					break;
 				}
 				case 5: {
