@@ -1,3 +1,6 @@
+*
+!*.*
+!/*
 *.exe
 *.in
 *.out
@@ -5,7 +8,7 @@
 *.zip
 *.ans
 *.dll
-*.cpp~
+*.*~
 *.swp
 *std
 *input.txt
@@ -16,3 +19,4 @@
 *out.*
 *.7z
 *.xml
+!*.cpp
