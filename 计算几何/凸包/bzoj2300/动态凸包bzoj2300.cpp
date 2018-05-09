@@ -7,6 +7,7 @@ int main() {}
 #include <algorithm>
 #include <cmath>
 #include <set>
+#include <iostream>
 namespace OI {
 struct P;
 typedef set<P>::iterator it;
@@ -16,7 +17,8 @@ const lf EPS = 1e-6;
 const int MXQ = 2e5 + 10, MXN = 1e5 + 10;
 const int REMOVE = 1, QUERY = 2;
 struct P {
-	lld x, y, id;
+	lld x, y;
+	int id;
 	lld operator * (const P &b) const {
 		return x * b.y - b.x * y;
 	}
@@ -34,7 +36,7 @@ inline lld pf(lld a) {
 	return a * a;
 }
 inline lf getdis(const P &a, const P &b) {
-	return sqrt(pf(a.x - b.x) + pf(a.y - b.y));
+	return sqrt((lf)pf(a.x - b.x) + pf(a.y - b.y));
 }
 
 struct Convex {
@@ -52,23 +54,25 @@ struct Convex {
 		while (pre != tree.begin()) {
 			ppre = getpre(pre);
 			if ((nd - *pre) * (*pre - *ppre) <= 0) {
-				length -= r[pre->id];
+				length -= l[pre->id];
 				tree.erase(pre);
 				pre = ppre;
 			} else {
 				break;
 			}
 		}
+		
 		if (pre->x == nd.x) {
-			length -= r[pre->id];
+			length -= l[pre->id]; //¿¿¿¿¿¿
 			tree.erase(pre);
 		}
+		
 	}
 	void popnxt(const P &nd, it nxt) {
 		it nnxt;
 		while ((nnxt = getnxt(nxt)) != tree.end()) {
 			if ((*nnxt - *nxt) * (*nxt - nd) <= 0) {
-				length -= l[nxt->id];
+				length -= r[nxt->id];
 				tree.erase(nxt);
 				nxt = nnxt;
 			} else {
@@ -78,7 +82,7 @@ struct Convex {
 	}
 	void insert(const P &nd) {
 		it nxt = tree.lower_bound(nd);
-		if (nxt != tree.end() && nxt->x == nd.x) return; //ÍüÁËÅÐnxt == tree.end() 
+		if (nxt != tree.end() && nxt->x == nd.x) return; //
 		it pre = getpre(nxt);
 		if (pre != tree.end() && nxt != tree.end()) {
 			if ((*nxt - nd) * (nd - *pre) <= 0) {
@@ -86,6 +90,7 @@ struct Convex {
 			}
 			length -= r[pre->id];
 		}
+		//¿¿¿¿
 		if (pre != tree.end()) poppre(nd, pre);
 		if (nxt != tree.end()) popnxt(nd, nxt);
 		it now = tree.insert(nd).first;
@@ -97,6 +102,13 @@ struct Convex {
 		if (nxt != tree.end()) {
 			length += r[now->id] = l[nxt->id] = getdis(*nxt, *now);
 		}
+		/*
+		lf tmp = 0;
+		for (now = tree.begin(); now != tree.end(); ++now) {
+			tmp += r[now->id];
+		}
+		if (fabs(tmp - length) > 0.01) printf("tmp = %lf, len = %lf\n", tmp, length);
+		*/
 	}
 	
 	
@@ -108,8 +120,6 @@ struct _Main {
 	int op[MXQ], id[MXQ];
 	int del[MXN];
 	_Main() {
-		freopen("defense1.in", "r", stdin);
-		freopen("defense1.ans", "w", stdout);
 		int n, m, a, b, Qn;
 		read(m); read(a); read(b);
 		read(n);
@@ -137,14 +147,13 @@ struct _Main {
 				ans[Q] = up.length;
 			} else {
 				ans[Q] = -1;
-//				if (--del[id[Q]] == 0) {
-					up.insert((P){x[id[Q]], y[id[Q]], id[Q]});
-//				}
+				up.insert((P){x[id[Q]], y[id[Q]], id[Q]});
 			}
 		}
 		for (int Q = 1; Q <= Qn; Q++) {
 			if (op[Q] == QUERY) {
-				printf("%.2lf\n", floor(ans[Q] * 100.0) / 100.);
+			//	printf("%.8lf ", ans[Q]);
+				printf("%.2lf\n", round(round(ans[Q] * 1000000.0) / 10000.0) / 100.0); //¿¿¿¿¿,¿¿¿¿¿¿¿¿
 			}
 		}
 	}
