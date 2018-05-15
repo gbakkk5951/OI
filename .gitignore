@@ -19,4 +19,6 @@
 *out.*
 *.7z
 *.xml
+*.swm
+!*.cpp
 
