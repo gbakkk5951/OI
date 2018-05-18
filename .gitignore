@@ -2,10 +2,16 @@
 !*/
 !*.cpp
 !*\*.cpp
+!*/*.cpp
+!*.cdf
 !*\*.cdf
+!*/*.cdf
 !*.pdf
 !*\*.pdf
+!*/*.pdf
 !*.doc
 !*\*.doc
+!*/*.doc
 !*.docx
 !*\*.docx
+!*/*.docx
