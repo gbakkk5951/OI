@@ -1,4 +1,11 @@
 *
-!*.cpp
 !*/
+!*.cpp
 !*\*.cpp
+!*\*.cdf
+!*.pdf
+!*\*.pdf
+!*.doc
+!*\*.doc
+!*.docx
+!*\*.docx
