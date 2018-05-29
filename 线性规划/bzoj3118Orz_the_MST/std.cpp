@@ -8,7 +8,9 @@ int main() {}
 #include <cmath>
 
 namespace OI {
+typedef long long lld;
 typedef double lf;
+const lf EPS = 1e-6;
 const int MXN = 1005, MXM = 4005;
 const int DST = 0, NXT = 1, ID = 2;
 lf A[MXM][MXN];
@@ -21,7 +23,6 @@ struct _Main {
 			A[x][j] *= rate;
 		}
 		A[x][y] = -rate;
-		swap(bid[x], ubid[y]);
 		for (int i = 0; i <= n; i++) {
 			if (i != x && fabs(A[i][y]) > EPS) {
 				rate = A[i][y];
@@ -62,10 +63,10 @@ struct _Main {
 		read(vn); read(en);
 		for (int e = 1; e <= en; e++) {
 			read(a[e]); read(b[e]); read(v[e]); 
-			read(intr[e]); read(dc[e]); read(ac[e]);
-			if (intr[e]) add(a[e], b[e]), add(b[e], a[e]);
+			read(intr[e]); read(ic[e]); read(dc[e]);
+			if (intr[e]) add(a[e], b[e], e), add(b[e], a[e], e);
 		}
-		intitree();
+		inittree();
 		initchart();
 		simplex();
 		printf("%lld", (lld)round(A[0][0]));
@@ -82,12 +83,11 @@ struct _Main {
 		n = en;
 		for (int e = 1; e <= en; e++) {
 			if (intr[e]) {
-				A[e][0] = ic[e];
+				A[e][0] = dc[e];
 				continue;
 			} else {
-				A[e][0] = dc[e];
+				A[e][0] = ic[e];
 			}
-			
 			a = this->a[e], b = this->b[e];
 			if (h[a] < h[b]) swap(a, b);
 			while (h[a] > h[b]) {
