@@ -13,7 +13,7 @@ typedef double lf;
 const lf EPS = 1e-6;
 const int MXN = 1005, MXM = 4005;
 const int DST = 0, NXT = 1, ID = 2;
-lf A[MXM][MXN];
+lf A[MXN][MXM];
 struct _Main {
 	int vn, en;
 	int n, m;//行、列
@@ -49,7 +49,7 @@ struct _Main {
 				if (A[i][cho] < -EPS) {
 					tmp = -A[i][0] / A[i][cho];
 					if (tmp < lim) {
-						tmp = lim;
+						lim = tmp;//又双叒叕写反了
 						cholim = i;
 					}
 				}
