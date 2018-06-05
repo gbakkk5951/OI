@@ -1,0 +1,6 @@
+1.串长为指数级,不能按照串哈希
+2.学会了set的并集和交集
+set a, b, dst;
+set_union(a.begin(), a.end(), b.begin(), b.end(), inserter(dst, dst.begin()));
+set_intersection(...)
+
