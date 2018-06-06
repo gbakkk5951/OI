@@ -1,215 +1,128 @@
+#include<cstdio>
+#include<iostream>
+#include<cstring>
+#include<algorithm>
 using namespace std;
-int main() {}
-#include <cstdio>
-#include <cctype>
-#include <cstring>
-#include <cstdlib>
-#include <algorithm>
-
-namespace OI {
-const int INF = 0x3f3f3f3f;
-const int MXN = 500050;
-const int ADD = 1, QUERY = 2;
-int lrand(int l, int r) {
-	return l + (rand() << 15 | rand()) % (r - l + 1);
-}
-struct LS {
-	int operator [] (int a) {
-		return a << 1;
-	}
-}ls;
-struct RS {
-	int operator [] (int a) {
-		return a << 1 | 1;
-	}
-}rs;
-int mx;
-struct SegTree {
-
-	int tag[2100000], node[2100000];
-	SegTree () {
-		clear(1);
-	}
-	void inline push(int nd) {
-		if (tag[nd]) {
-			clear(ls[nd]);
-			clear(rs[nd]);
-			tag[nd] = 0;
-		}
-	}
-	void clear(int nd) {
-		node[nd] = INF;
-		tag[nd] = 1;
-	}
-	void change(int pos, int v) {
-		int nd = 1, nl = 1, nr = mx;
-		while (1) {
-			node[nd] = min(node[nd], v);
-			if (nl == nr) {
-				return;
-			}
-			push(nd);
-			int mid = nl + nr >> 1;
-			if (pos <= mid) {
-				nd = ls[nd]; nr = mid;
-			} else {
-				nd = rs[nd]; nl = mid + 1;
-			}
-		}
-	}
-	int query(int mx) {
-		int nd = 1, nl = 1, nr = OI::mx; // ÃüÃû³åÍ» 
-		int ret = INF;
-		while (1) {
-			if (node[nd] >= ret) break;
-			if (nr <= mx) {
-				ret = min(ret, node[nd]);
-				break;
-			}
-			push(nd);
-			int mid = nl + nr >> 1;
-			if (mx <= mid) {
-				nd = ls[nd]; nr = mid;
-			} else {
-				ret = min(ret, node[ls[nd]]);
-				nd = rs[nd]; nl = mid + 1;
-			}
-		}
-		return ret;
-	}
-	void clear() {
-		clear(1);
-	}
-}tree;
-
-int ans[MXN];
-
-struct Ques {
-	int id, tp, x, y;
-	bool operator < (const Ques &b) const {
-		if (x != b.x) {
-			return x < b.x;
-		}
-		if (y != b.y) {
-			return y < b.y;
-		}
-		return tp < b.tp;
-	}
+const int maxn=1000010;
+const int inf=0x3f3f3f3f;
+struct node
+{
+    int d[2],mx[2],mn[2],l,r;
+    int& operator [](int x){return d[x];}
+    node(int x=0,int y=0) 
+    {
+        d[0]=x;d[1]=y;l=0;r=0;
+    }
 };
-Ques arr[MXN << 1];
-Ques tmp[MXN << 1];
-void cdq(int l, int r) {
-	int a1 = 0, a2 = 0, q1 = 0, q2 = 0;
-	int mid = l + r >> 1;
-	int idx = 0;
-	for (int i = l; i <= mid; i++) {
-		if (arr[i].tp == ADD) {
-			tmp[idx++] = arr[i];
-			a1++;
-		} else {
-			q1++;
-		}
-	}
-	for (int i = mid + 1; i <= r; i++) {
-		if (arr[i].tp == QUERY) {
-			tmp[idx++] = arr[i];
-			q2++;
-		} else {
-			a2++;
-		}
-	}
-	if (a1 && q2) {
-		sort(tmp, tmp + idx);
-		for (int i = 0; i < idx; i++) {
-			if (tmp[i].tp == ADD) {
-				tree.change(tmp[i].y, -tmp[i].x - tmp[i].y);
-			} else {
-				ans[tmp[i].id] = min(ans[tmp[i].id], tmp[i].x + tmp[i].y + tree.query(tmp[i].y));
-			}
-		}
-		tree.clear();
-		for (int i = 0; i < idx; i++) {
-			if (tmp[i].tp == ADD) {
-				ans[tmp[i].id] = min(ans[tmp[i].id], tmp[i].x + tmp[i].y + tree.query(tmp[i].y));
-			}
-		}
-	}
-	if (a1 && q1) {
-		cdq(l, mid);
-	}
-	if (a2 && q2) {
-		cdq(mid + 1, r);
-	}
+node p[maxn];
+int n,m,D,root;
+bool operator < (node a,node b)
+{
+    return a[D]<b[D];
 }
-
-
-struct _Main {
-	int qidx, aidx;
-	int op[MXN << 1], x[MXN << 1], y[MXN << 1];
-	_Main() {
-		int n, Qn;
-//		n = 3e5; Qn = 3e5;
-		read(n); read(Qn);
-		for (int i = 1; i <= n; i++) {
-			++qidx;
-			op[qidx] = ADD;
-//			x[qidx] = lrand(0, 1e6);
-//			y[qidx] = lrand(0, 1e6);
-			read(x[qidx]); read(y[qidx]);
-		}
-		
-		for (int Q = 1; Q <= Qn; Q++) {
-			++qidx;
-//			op[qidx] = lrand(1, 2);
-//			x[qidx] = lrand(0, 1e6);
-//			y[qidx] = lrand(0, 1e6);
-			read(op[qidx]); 
-			read(x[qidx]); read(y[qidx]);
-			
-			if (op[qidx] == QUERY) {
-				aidx++;
-			}
-		}
-		memset(ans + 1, 63, aidx * sizeof(int));
-		for (int i = 1; i <= qidx; i++) {
-			x[i]++; y[i]++;
-			mx = max(mx, y[i]);
-			mx = max(mx, x[i]);
-		}
-		for (int I = 0; I < 4; I++) {
-			aidx = 0;
-			for (int i = 1; i <= qidx; i++) {
-				if (op[i] == ADD) {
-					arr[i] = (Ques) {0, op[i], x[i], y[i]};
-				} else {
-					arr[i] = (Ques) {++aidx, op[i], x[i], y[i]};
-				}
-			}
-			cdq(1, qidx);
-			if (I == 3) break;
-			if (I & 1) {
-				for (int i = 1; i <= qidx; i++) {
-					y[i] = mx - y[i] + 1;
-				}
-			} else {
-				for (int i = 1; i <= qidx; i++) {
-					x[i] = mx - x[i] + 1;
-				}
-			}
-		}
-		
-		for (int i = 1; i <= aidx; i++) {
-			printf("%d\n", ans[i]);
-		}
-	}
-template <typename Type>
-	void read(Type &a) {
-		char t;
-		while (!isdigit(t = getchar()));
-		a = t - '0';
-		while ( isdigit(t = getchar())) {
-			a *= 10; a += t - '0';
-		}
-	}
-}bzoj2716;
+int dis(node a,node b)
+{
+    return abs(a[0]-b[0])+abs(a[1]-b[1]);
+}
+struct kdtree
+{
+    int ans;
+    node T[maxn],t;
+    void update(int x)
+    {
+        node l=T[T[x].l],r=T[T[x].r];
+        for(int i=0;i<2;i++)
+        {
+            if(T[x].l) T[x].mn[i]=min(T[x].mn[i],l.mn[i]),T[x].mx[i]=max(T[x].mx[i],l.mx[i]);
+            if(T[x].r) T[x].mn[i]=min(T[x].mn[i],r.mn[i]),T[x].mx[i]=max(T[x].mx[i],r.mx[i]);
+        }
+    }
+    int build(int l,int r,int now)  {
+        D=now;
+        int mid=(l+r)>>1;
+        nth_element(p+l,p+mid,p+r+1);
+        T[mid]=p[mid];
+        for(int i=0;i<2;i++)
+            T[mid].mn[i]=T[mid].mx[i]=T[mid][i];
+        if(l<mid) T[mid].l=build(l,mid-1,now^1);
+        if(r>mid) T[mid].r=build(mid+1,r,now^1);
+        update(mid);
+        return mid;
+    }
+    int getdist(int x,node p){
+        int res=0;
+        for(int i=0;i<2;i++)
+            res+=max(0,T[x].mn[i]-p[i]);
+        for(int i=0;i<2;i++)
+            res+=max(0,p[i]-T[x].mx[i]);
+        return res;
+    }
+    void insert(int k,int now, int dep = 0){
+        if(T[k][now]<=t[now])
+        {
+            if(T[k].r) insert(T[k].r,now^1, dep + 1);
+            else
+            {
+			//	cerr << "dep = " << dep << endl;
+				
+                n++;T[k].r=n;T[n]=t;
+                for(int i=0;i<2;i++)
+                    T[n].mn[i]=T[n].mx[i]=T[n][i];
+            }
+        }
+        else
+        {
+            if(T[k].l) insert(T[k].l,now^1, dep + 1);
+            else
+            {
+			//	cerr << "dep = " << dep << endl;
+                n++;T[k].l=n;T[n]=t;
+                for(int i=0;i<2;i++)
+                    T[n].mn[i]=T[n].mx[i]=T[n][i];
+            }
+        }
+        update(k);
+    }
+    void query(int x,int now){
+        int d,dl=inf,dr=inf;
+        d=dis(T[x],t);
+        ans=min(ans,d);
+        if(T[x].l) dl=getdist(T[x].l,t);
+        if(T[x].r) dr=getdist(T[x].r,t);
+        if(dl<dr)
+        {
+            if(dl<ans) query(T[x].l,now^1);
+            if(dr<ans) query(T[x].r,now^1);
+        }
+        else
+        {
+            if(dr<ans) query(T[x].r,now^1);
+            if(dl<ans) query(T[x].l,now^1);  
+        }
+    }
+    int query(node p)
+    {
+        ans=inf;
+        t=p;query(root,0);
+        return ans;
+    }
+    void insert(node p)
+    {
+        t=p;insert(root,0);
+    }
+}kd;
+int k,op,x,y;
+int main()
+{
+    scanf("%d%d",&n,&m);
+    for(int i=1;i<=n;i++)
+        scanf("%d%d",&p[i][0],&p[i][1]);
+    root=kd.build(1,n,0);
+    for(int i=1;i<=m;i++)
+    {
+        scanf("%d%d%d",&op,&x,&y);
+        if(op==1) kd.insert(node(x,y));
+        else printf("%d\n",kd.query(node(x,y)));
+    }
+    return 0;
 }

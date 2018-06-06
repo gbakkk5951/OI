@@ -5,11 +5,12 @@ int main() {}
 #include <cstdlib>
 #include <algorithm>
 #include <cctype>
+#include <iostream>
 namespace OI {
 typedef double lf;
 const int MXN = 1e6 + 100;
 const int INF = 5e8;
-const lf ALPHA = 0.78;
+const lf ALPHA = 0.88;
 struct P {
 	int x[2];
 	inline int & operator [] (int dim) {
@@ -23,11 +24,12 @@ struct Node {
 	int size;
 	void update() {
 		size = 1 + s[0]->size + s[1]->size;
-		for (int i = 0; i < 2; i++) {
-			mx[i] = max(s[0]->mx[i], s[1]->mx[i]);
-			mx[i] = max(mx[i], p[i]);
-			mn[i] = min(s[0]->mn[i], s[1]->mn[i]);
-			mn[i] = min(mn[i], p[i]);
+		mx[1] = mx[0] = -INF; mn[0] = mn[1] = INF;
+		for (int i = 0; i < 2; i++) if(s[i]->size) {
+			mx[0] = max(mx[0], max(s[i]->mx[0], s[i]->p[0]));
+			mn[0] = min(mn[0], min(s[i]->mn[0], s[i]->p[0]));
+			mx[1] = max(mx[1], max(s[i]->mx[1], s[i]->p[1]));
+			mn[1] = min(mn[1], min(s[i]->mn[1], s[i]->p[1]));
 		}
 	}
 }pool[MXN], *null;
@@ -36,7 +38,9 @@ Node *new_(P a) {
 	Node *nd = &pool[pidx++];
 	nd->s[0] = nd->s[1] = null;
 	for (int i = 0; i < 2; i++) {
-		nd->p[i] = nd->mx[i] = nd->mn[i] = a[i];
+		nd->p[i] = a[i];
+		nd->mn[i] = INF;
+		nd->mx[i] = -INF;
 	}
 	nd->size = 1;
 	return nd;
@@ -73,7 +77,7 @@ struct KDTree{
 		null->s[0] = null->s[1] = null;
 	}
 
-	Node* insert(Node *nd, P a, int dim) {
+	Node* insert(Node *nd, P &a, int dim) {
 		int spo = a[dim] > nd->p[dim];
 		if (nd->s[spo] == null) {
 			nd->s[spo] = new_(a);
@@ -87,10 +91,14 @@ struct KDTree{
 				nd->s[spo] = insert(nd->s[spo], a, dim ^ 1);
 			}
 		}
-		nd->update();
+		for (int i = 0; i < 2; i++) {
+			nd->mn[i] = min(nd->mn[i], a[i]);
+			nd->mx[i] = max(nd->mx[i], a[i]);
+		}
+		nd->size++;
 		return nd;
 	}
-	void insert(P a) {
+	void insert(P &a) {
 		if (root == 0) {
 			root = new_(a);
 		} else {
@@ -120,16 +128,21 @@ struct KDTree{
 			}
 		}
 	}
-	int calc(Node *nd, P a, int now = INF) {
+	int calc(Node *nd, P &a, int now = INF) {
+		int d[2] = {INF, INF};
 		for (int i = 0; i < 2; i++) {
-			if (nd->s[i] != null) {
+			if (nd->s[i]->size) {
 				now = min(now, getdis(nd->s[i]->p, a));
+				if (nd->s[i]->size > 1) {
+					d[i] = astar(nd->s[i], a);
+				}
 			}
 		}
-		for (int i = 0; i < 2; i++) {
-			if (nd->s[i]->size <= 1) continue;
-			if (astar(nd->s[i], a) < now) {
-				now = calc(nd->s[i], a, now);
+		int fst = d[1] < d[0];
+		if (d[fst] < now) {
+			now = calc(nd->s[fst], a, now);//忘了这一句
+			if (d[fst ^ 1] < now) {
+				now = calc(nd->s[fst ^ 1], a, now);
 			}
 		}
 		return now;

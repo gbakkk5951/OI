@@ -50,11 +50,13 @@ void make(){
 		int val = 1000000;
 		cout << n << sp << m << endl;
 		for (int i = 1; i <= n; i++) {
-			cout << lrand(0, val) << sp << lrand(0, val) << endl;
+			cout << 1 << sp << i << endl;;
+			//cout << /*i*/lrand(0, val) << sp << lrand(0, val) << endl;
 		}
 		for (int i = 1; i <= m; i++) {
-			cout << lrand(1, 2) << sp;
-			cout << lrand(0, val) << sp << lrand(0, val) << endl;
+			cout << lrand(1, 1) << sp;
+			cout << 1 << sp << n + i << endl; 
+			//cout << /*i*/lrand(0, val) << sp << lrand(0, val) << endl;
 		}
 		
 		EndFor1:
