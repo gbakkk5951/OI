@@ -1,0 +1,72 @@
+{binary -101 Compile failed.
+-101 0 ? Compile failed.
+}102 0
+{pair -101 Compile failed.
+-101 0 ? Compile failed.
+}102 0
+{swap -101 Compile failed.
+-101 0 ? Compile failed.
+}102 0
+{mvst -101 Compile failed.
+-101 0 ? Compile failed.
+}102 0
+{tri 100 Compile successfully
+101 0 0.212 Player's number differs with the answer!
+101 0 0.236 Player's number differs with the answer!
+101 0 0.232 Player's number differs with the answer!
+101 0 0.240 Player's number differs with the answer!
+101 0 0.236 Player's number differs with the answer!
+101 0 0.268 Player's number differs with the answer!
+101 0 0.556 Player's number differs with the answer!
+101 0 0.216 Player's number differs with the answer!
+101 0 0.236 Player's number differs with the answer!
+101 0 0.248 Player's number differs with the answer!
+}102 0
+{gap 100 Compile successfully
+101 10 0.008 Right output!!!
+101 10 0.324 Right output!!!
+-103 0 8.096 Time out.
+-103 0 8.096 Time out.
+-103 0 8.096 Time out.
+-103 0 8.092 Time out.
+-103 0 8.096 Time out.
+-103 0 8.096 Time out.
+-103 0 8.092 Time out.
+-103 0 8.096 Time out.
+}102 20
+{binary -101 Compile failed.
+-101 0 ? Compile failed.
+}102 0
+{pair -101 Compile failed.
+-101 0 ? Compile failed.
+}102 0
+{swap -101 Compile failed.
+-101 0 ? Compile failed.
+}102 0
+{mvst -101 Compile failed.
+-101 0 ? Compile failed.
+}102 0
+{tri 100 Compile successfully
+101 0 0.224 Player's number differs with the answer!
+101 0 0.232 Player's number differs with the answer!
+101 0 0.220 Player's number differs with the answer!
+101 0 0.252 Player's number differs with the answer!
+101 0 0.236 Player's number differs with the answer!
+101 0 0.296 Player's number differs with the answer!
+101 0 0.604 Player's number differs with the answer!
+101 0 0.228 Player's number differs with the answer!
+101 0 0.240 Player's number differs with the answer!
+101 0 0.244 Player's number differs with the answer!
+}102 0
+{gap 100 Compile successfully
+101 10 0.008 Right output!!!
+101 10 0.340 Right output!!!
+-103 0 8.096 Time out.
+-103 0 8.096 Time out.
+-103 0 8.096 Time out.
+-103 0 8.096 Time out.
+-103 0 8.096 Time out.
+-103 0 8.092 Time out.
+-103 0 8.096 Time out.
+-103 0 8.096 Time out.
+}102 20

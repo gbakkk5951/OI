@@ -1,0 +1,36 @@
+{mvst 100 Compile successfully
+-103 0 1.072 Time out.
+-103 0 1.052 Time out.
+-103 0 1.060 Time out.
+-103 0 1.048 Time out.
+-103 0 1.448 Time out.
+-103 0 1.044 Time out.
+-103 0 1.060 Time out.
+-103 0 1.096 Time out.
+-103 0 1.096 Time out.
+-103 0 1.100 Time out.
+}102 0
+{tri 100 Compile successfully
+101 10 0.180 Right output!!!
+101 10 0.192 Right output!!!
+101 10 0.188 Right output!!!
+101 10 0.184 Right output!!!
+101 10 0.172 Right output!!!
+101 0 0.184 Player's number differs with the answer!
+101 0 0.184 Player's number differs with the answer!
+101 0 0.196 Player's number differs with the answer!
+101 0 0.180 Player's number differs with the answer!
+101 0 0.180 Player's number differs with the answer!
+}102 50
+{gap 100 Compile successfully
+101 10 0.020 Right output!!!
+-103 0 4.100 Time out.
+-103 0 4.100 Time out.
+-103 0 4.100 Time out.
+-103 0 4.096 Time out.
+-103 0 4.100 Time out.
+-103 0 4.100 Time out.
+-103 0 4.072 Time out.
+-103 0 4.100 Time out.
+-103 0 4.096 Time out.
+}102 10

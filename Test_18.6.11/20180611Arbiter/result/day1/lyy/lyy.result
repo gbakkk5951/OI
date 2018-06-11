@@ -1,0 +1,27 @@
+{mvst -101 Compile failed.
+-101 0 ? Compile failed.
+}102 0
+{tri 100 Compile successfully
+101 10 0.176 Right output!!!
+101 10 0.172 Right output!!!
+101 10 0.168 Right output!!!
+101 10 0.192 Right output!!!
+101 10 0.180 Right output!!!
+101 10 0.192 Right output!!!
+101 10 0.180 Right output!!!
+101 10 0.224 Right output!!!
+101 10 0.796 Right output!!!
+-103 0 2.092 Time out.
+}102 90
+{gap 100 Compile successfully
+101 10 0.024 Right output!!!
+101 10 3.956 Right output!!!
+-103 0 4.092 Time out.
+-103 0 4.096 Time out.
+-103 0 4.096 Time out.
+-103 0 4.088 Time out.
+-103 0 4.096 Time out.
+-103 0 4.092 Time out.
+-103 0 4.092 Time out.
+-103 0 4.096 Time out.
+}102 20

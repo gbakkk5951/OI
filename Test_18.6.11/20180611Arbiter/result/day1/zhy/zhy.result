@@ -1,0 +1,27 @@
+{binary -101 Compile failed.
+-101 0 ? Compile failed.
+}102 0
+{pair -101 Compile failed.
+-101 0 ? Compile failed.
+}102 0
+{swap -101 Compile failed.
+-101 0 ? Compile failed.
+}102 0
+{mvst -101 Compile failed.
+-101 0 ? Compile failed.
+}102 0
+{tri -101 Compile failed.
+-101 0 ? Compile failed.
+}102 0
+{gap 100 Compile successfully
+101 10 0.004 Right output!!!
+101 10 0.040 Right output!!!
+101 10 0.172 Right output!!!
+101 10 1.192 Right output!!!
+101 10 0.592 Right output!!!
+101 10 2.308 Right output!!!
+101 10 3.064 Right output!!!
+101 10 4.644 Right output!!!
+101 10 5.180 Right output!!!
+101 10 5.888 Right output!!!
+}102 100
