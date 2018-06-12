@@ -1,0 +1,27 @@
+{binary -101 Compile failed.
+-101 0 ? Compile failed.
+}102 0
+{pair -101 Compile failed.
+-101 0 ? Compile failed.
+}102 0
+{swap -101 Compile failed.
+-101 0 ? Compile failed.
+}102 0
+{mvst -101 Compile failed.
+-101 0 ? Compile failed.
+}102 0
+{tri -101 Compile failed.
+-101 0 ? Compile failed.
+}102 0
+{gap 100 Compile successfully
+101 0 0.028 Player's number differs with the answer!
+101 0 0.048 Player's number differs with the answer!
+101 0 0.108 Player's number differs with the answer!
+101 0 0.632 Player's number differs with the answer!
+101 0 0.504 Player's number differs with the answer!
+101 0 1.148 Player's number differs with the answer!
+101 0 1.612 Player's number differs with the answer!
+101 0 2.316 Player's number differs with the answer!
+101 0 3.012 Player's number differs with the answer!
+101 0 3.064 Player's number differs with the answer!
+}102 0
