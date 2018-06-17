@@ -1,0 +1,13 @@
+TITLE=
+NAME=tri
+RUN=
+INFILESUFFIX=in
+ANSFILESUFFIX=ans
+PLUG=slsn_int
+TYPE=SOURCE
+LIMIT=2
+MEMLIMITS=256
+SAMPLES=10
+CCL=c@gcc -o %o %i 
+CCL=cpp@g++ -o %o %i 
+CCL=pas@fpc %i 

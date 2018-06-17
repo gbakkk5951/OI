@@ -14,7 +14,7 @@ struct _Main {
 	int n;
 	int dis[MXN];
 	int head[MXN];
-	int edge[MXN * 3][3];//every pair of relation for 2 edge and every none zero for 1 edge
+	int edge[MXN * 2][3];//every pair of relation for 2 edge /*and every none zero for 1 edge*/
 	int eidx;
 	void add(int a, int b, int c) {
 		eidx++;
@@ -27,24 +27,28 @@ struct _Main {
 	int cnt[MXN];
 	lld spfa() {
 		queue<int> q;
-		memset(dis + 1, 0, n * sizeof(int));
-		q.push(0);
+		fill(dis + 1, dis + n + 1, 1);
 		int nd, t;
-		while (!q.empty()) {
-			nd = q.front();
-			inq[nd] = 0;
-			q.pop();
-			for (int e = head[nd]; e; e = edge[e][NXT]) {
-				t = edge[e][DST];
-				if (dis[t] < dis[nd] + edge[e][VAL]) {
-					dis[t] = dis[nd] + edge[e][VAL];
-					if (++cnt[t] == n) return -1;
-					if (!inq[t]) {
-						q.push(t);
-						inq[t] = 1;
+		for (int i = 1; i <= n; i++) {
+			if (cnt[i]) continue; 
+			q.push(i);
+			while (!q.empty()) {
+				nd = q.front();
+				inq[nd] = 0;
+				q.pop();
+				for (int e = head[nd]; e; e = edge[e][NXT]) {
+					t = edge[e][DST];
+					if (dis[t] < dis[nd] + edge[e][VAL]) {
+						dis[t] = dis[nd] + edge[e][VAL];
+						if (++cnt[t] == n) return -1;
+						if (!inq[t]) {
+							q.push(t);
+							inq[t] = 1;
+						}
 					}
 				}
 			}
+		
 		}
 		lld ans = 0;
 		for (int i = 1; i <= n; i++) {
@@ -75,9 +79,10 @@ struct _Main {
 				add(a, b, 0);
 			}
 		}
-		for (int i = 1; i <= n; i++) {
+		//there's no need to do this; just assign the dis to 1
+		/*for (int i = 1; i <= n; i++) {
 			add(0, i, 1);
-		}
+		}*/
 		printf("%lld", spfa());
 	}
 template <typename Type>

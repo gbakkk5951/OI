@@ -1,0 +1,37 @@
+{chocolate 100 Compile successfully
+101 0 0.000 Player's number differs with the answer!
+101 0 0.000 Player's number differs with the answer!
+101 0 0.200 Player's number differs with the answer!
+101 0 0.312 Player's number differs with the answer!
+101 0 0.176 Player's number differs with the answer!
+101 0 0.148 Player's number differs with the answer!
+101 0 0.000 Player's number differs with the answer!
+101 0 0.000 Player's number differs with the answer!
+101 0 0.000 Player's number differs with the answer!
+101 0 0.000 Player's number differs with the answer!
+}102 0
+{rabbit -101 Compile failed.
+-101 0 ? Compile failed.
+}102 0
+{teaegg 100 Compile successfully
+101 10 0.000 Right output!!!
+101 10 0.000 Right output!!!
+101 10 0.000 Right output!!!
+101 10 0.000 Right output!!!
+101 10 0.000 Right output!!!
+101 10 0.000 Right output!!!
+101 10 0.012 Right output!!!
+101 10 0.024 Right output!!!
+101 10 0.024 Right output!!!
+101 10 0.036 Right output!!!
+101 10 0.016 Right output!!!
+101 10 0.020 Right output!!!
+101 10 0.024 Right output!!!
+101 10 0.036 Right output!!!
+101 10 0.036 Right output!!!
+101 10 0.024 Right output!!!
+101 10 0.036 Right output!!!
+101 10 0.032 Right output!!!
+101 10 0.032 Right output!!!
+101 10 0.020 Right output!!!
+}102 200

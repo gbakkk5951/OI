@@ -1,0 +1,13 @@
+TITLE=
+NAME=rabbit
+RUN=
+INFILESUFFIX=in
+ANSFILESUFFIX=ans
+PLUG=mlsn_int
+TYPE=SOURCE
+LIMIT=8
+MEMLIMITS=512
+SAMPLES=10
+CCL=c@gcc -o %o %i 
+CCL=cpp@g++ -o %o %i 
+CCL=pas@fpc %i 

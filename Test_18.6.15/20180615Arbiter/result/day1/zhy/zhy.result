@@ -1,0 +1,38 @@
+{chocolate -101 Compile failed.
+-101 0 ? Compile failed.
+}102 0
+{teaegg 100 Compile successfully
+101 10 0.000 Right output!!!
+101 10 0.000 Right output!!!
+101 10 0.000 Right output!!!
+101 10 0.000 Right output!!!
+101 10 0.000 Right output!!!
+101 10 0.000 Right output!!!
+101 10 0.020 Right output!!!
+101 10 0.024 Right output!!!
+101 10 0.024 Right output!!!
+101 10 0.028 Right output!!!
+101 10 0.020 Right output!!!
+101 10 0.020 Right output!!!
+101 10 0.024 Right output!!!
+101 10 0.028 Right output!!!
+101 10 0.024 Right output!!!
+101 10 0.024 Right output!!!
+101 10 0.028 Right output!!!
+101 10 0.028 Right output!!!
+101 10 0.028 Right output!!!
+101 10 0.020 Right output!!!
+}102 200
+{rabit 100 Compile successfully
+{rabbit 100 Compile successfully
+101 10 0.012 Right output!!!
+101 10 5.584 Right output!!!
+101 10 5.668 Right output!!!
+-103 0 8.084 Time out.
+-103 0 8.084 Time out.
+-103 0 8.064 Time out.
+-103 0 8.084 Time out.
+-103 0 8.028 Time out.
+-103 0 8.080 Time out.
+-103 0 8.080 Time out.
+}102 30
