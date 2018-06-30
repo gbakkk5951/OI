@@ -38,8 +38,28 @@ const int INF = 0x3f3f3f3f;
 const lld LINF = (lld)INF << 32 | INF;
 const int DST = 0, NXT = 1, VAL = 2, FLOW = 2, CST = 3;
 struct _Main {
+	int sum[MXN];
+	int n, kn;
+	int ans;
+	int dp[105][MXN];
+	void getdp() {
+		memset(dp, 192, sizeof(dp));
+		for (int i = 1; i <= n; i++) {
+			for (int k = 1; k <= kn; k++) {
+				
+				
+				
+			}
+		}
+	}
 	_Main() {
-		
+		read(n); read(kn);
+		for (int i = 1; i <= n; i++) {
+			read(sum[i]);
+			sum[i] += sum[i - 1];
+		}
+		getdp();
+		printf("%d", ans);
 	}
 template <typename Type>
 	void read(Type &a) {

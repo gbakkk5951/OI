@@ -37,9 +37,52 @@ const lf PI = acos(-1.0);
 const int INF = 0x3f3f3f3f;
 const lld LINF = (lld)INF << 32 | INF;
 const int DST = 0, NXT = 1, VAL = 2, FLOW = 2, CST = 3;
+const int MXN = 3e4 + 10;
 struct _Main {
+	lld dp[2][MXN];
+	int a[MXN];
+	void getdp() {
+		memset(dp, 63, sizeof(dp));
+		int it = 0, mx = 0, now;
+		lld val;
+		dp[it][0] = 0;
+		for (int i = 1; i <= n; i++) {
+			it ^= 1;
+			lld *dp = this->dp[it];
+			lld *ldp = this->dp[it ^ 1];
+			now = a[i];
+			mx = max(mx, now);
+			for (int j = 0; j <= i - 1; j++) {
+				if (ldp[j] == LINF) continue;
+				val = ldp[j];
+				ldp[j] = LINF;
+				if (now == mx) {
+					dp[j] = min(dp[j], val + now);
+				} else
+				if (now <= j) {
+					dp[j] = min(dp[j], val + a[j]);
+				} else {
+					dp[i] = min(dp[i], val + now);
+					dp[j] = min(dp[j], val + mx);
+				}
+			}
+		}
+	}
+	int n;
 	_Main() {
-		
+		freopen("c.in", "r", stdin);
+		freopen("c.out", "w", stdout);
+		lld ans = LINF;
+		read(n);
+		for (int i = 1; i <= n; i++) {
+			read(a[i]);
+		}
+		getdp();
+		for (int i = 1; i <= n; i++) {
+			ans = min(ans, dp[n & 1][i]);
+		}
+		printf("%lld", ans);
+		fclose(stdout);
 	}
 template <typename Type>
 	void read(Type &a) {

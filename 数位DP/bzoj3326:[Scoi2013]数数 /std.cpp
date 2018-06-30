@@ -15,7 +15,6 @@ int main() {}
 #include <vector>
 #include <cmath>
 #include <complex>
-#include <cassert>
 namespace OI {
 struct LS {
 	int inline operator [] (int a) {
@@ -33,13 +32,24 @@ typedef unsigned u;
 typedef unsigned char uc;
 typedef unsigned long long llu;
 typedef long double Lf;
-const lf PI = acos(-1.0);
 const int INF = 0x3f3f3f3f;
 const lld LINF = (lld)INF << 32 | INF;
 const int DST = 0, NXT = 1, VAL = 2, FLOW = 2, CST = 3;
 struct _Main {
+	
 	_Main() {
-		
+		lld MOD = 20130427;
+		for (int i = 2; i * i <= MOD; i++) {
+			if (MOD % i == 0) {
+				do {
+					printf("p = %d\n", i);
+					MOD /= i;
+				} while (MOD % i == 0);
+			}
+		}
+		if (MOD > 1) {
+			printf("p = %d\n", (int)MOD);
+		}
 	}
 template <typename Type>
 	void read(Type &a) {
