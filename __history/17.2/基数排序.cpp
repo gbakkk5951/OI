@@ -4,7 +4,7 @@
 using namespace std;
 vector <int> bukkit[10];
 
-vector<int >data;
+vector<int>data;
 int main() 
 {
 FILE	*a,*b;
